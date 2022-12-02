@@ -1,0 +1,36 @@
+01/12/2002
+Pippo
+50
+1/12/2002
+Pippo
+50
+30/11/2022
+Pirippo
+12
+01/12/2002
+Pippo
+50
+30/11/2022
+Pirippo
+120
+1/12/23
+Consegna Fornitore
+522
+salsi
+Paolo
+123
+30/11/2022
+Pirippo
+12
+01/12/2002
+Pippo
+50
+1/12/2003
+Scarico merci
+123455
+Mamma
+a
+-568
+20/2/1993
+Federico Barbacacca
+1000
