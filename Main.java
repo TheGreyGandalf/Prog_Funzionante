@@ -34,6 +34,7 @@ public class Main {
         MyPanel panel = new MyPanel(arr);
         f.add(panel);
         f.pack();
+        f.add(new JScrollPane());
         //f.setBounds(300,300, 300,300);
         f.setDefaultCloseOperation(EXIT_ON_CLOSE);
         f.setLocationRelativeTo(null);

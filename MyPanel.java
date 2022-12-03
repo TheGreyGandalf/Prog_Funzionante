@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +18,8 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
 
         public JTextField txt, txt2;
 
-        //private JTable t;
+        private JTable t;
+        private tab tm;
 
         private JLabel l;
 
@@ -35,20 +37,20 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
 
             //TableModel dataModel = new tab(lista);
             // crea la tabella
-            JTable t = new JTable();
-            tab tm = new tab(lista);
-
-            t.setModel(tm);
-
-            // aggiunge la tabella al pannello
+            tm = new tab(lista);
+            //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
+            t = new JTable(tm);   // aggiunge la tabella al pannello
+            tm.settaValori();
 
             //DefaultTableModel tm = new DefaultTableModel();
 
             JPanel pTab = new JPanel();                 //pannello con tabella e header
             pTab.setLayout(new BorderLayout());
             //pTab.setLayout(new BorderLayout());
+
             pTab.add(t, BorderLayout.CENTER);
             pTab.add(t.getTableHeader(), BorderLayout.NORTH);
+            //pTab.add(new JScrollPane(t));
             this.add(pTab, BorderLayout.NORTH);
 
 
@@ -153,6 +155,14 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                                     sc.ScriviNormale("dati.txt", lista, "\n", false);      //scrivo su file le modifiche
                                     //le scrivo su file
                                     //ricarico la tabella coi nuovi dati aggiornati
+                                    /*Object[] row = new Object[3];
+                                    row[0]=ogg.Data;
+                                    row[1]=ogg.Descrizione;
+                                    row[2]=ogg.Ammontare;
+                                    tm.addRow(row);*/
+                                    tm.settaValori();
+                                    //t.repaint();                //funziona ma va a posti.
+                                    t.invalidate();
                                     f.dispose();
 
 
@@ -197,6 +207,9 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                         tm.removeRow(i);                 //dovrebbe eliminare la riga
                     }*/
                     scr.ScriviNormale("dati.txt", lista, "\n", false);
+                    tm.settaValori();
+                    //t.repaint();                //funziona ma va a posti.
+                    t.invalidate();
                 }
             });
             this.add(elimina, BorderLayout.SOUTH);

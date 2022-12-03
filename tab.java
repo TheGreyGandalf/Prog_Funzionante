@@ -1,8 +1,13 @@
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.util.ArrayList;
 
 public class tab extends DefaultTableModel {
+
+    private DefaultTableModel tm ;
     private ArrayList<Conto> arrayConto;
+    private JTable tabella;
     //private Vector v;
 
     /**
@@ -12,6 +17,8 @@ public class tab extends DefaultTableModel {
     public tab(ArrayList<Conto> C) {
         //this.v = v; // inizializzato con il vettore
         arrayConto=C;
+
+        settaValori();
     }
 
     public tab() {
@@ -30,10 +37,11 @@ public class tab extends DefaultTableModel {
 
 
     /**
-     *
-     * @param row        the row whose value is to be queried
-     * @param col     the column whose value is to be queried
+     * @param row the row whose value is to be queried
+     * @param col the column whose value is to be queried
+     * @return
      */
+
     @Override
     public Object getValueAt(int row, int col) {
         // seleziona il libro
@@ -44,31 +52,62 @@ public class tab extends DefaultTableModel {
             case 2: return arrayConto.get(row).getAmmontare();
         }
         return "";
+    }
+
+    /**
+     * Metodo che Assegna valori quando viene richiesto ed inserisce nuove righe con del
+     * valore da far vedere
+     */
+
+    public void settaValori() {
+        String Dat, Desc;
+        int ammo;
+        tm= new DefaultTableModel();
+        JTable table = new JTable(tm);
+        tm.addColumn(getColumnName(0));
+        tm.addColumn(getColumnName(1));
+        tm.addColumn(getColumnName(2));
+
+        for (int i = 0; i < arrayConto.size(); i++) {
+            Dat=arrayConto.get(i).getData();
+            Desc=arrayConto.get(i).getDescrizione();
+            ammo=arrayConto.get(i).getAmmontare();
+            tm.insertRow(i, new Object[]{Dat, Desc, ammo});
+
         }
+
+    }
 
     /**
      *
-     * @param value          Il valore che è stato inserito
+     * @param value          Il valore "oggetto" che è stato inserito
      * @param row             Riga in cui è inserito
      * @param col          Colonna in cui è inserito
      */
-    public void setValueAt(Conto value, int row, int col) {                //NON FUNZIONANTE
+    public void setValueAt(Object value, int row, int col) {                //NON FUNZIONANTE
         //Book b = (Book)v.elementAt(row);
         //Conto[] c = new Conto[1];
-        ArrayList<Conto> arrConto = new ArrayList<>(1);
-        arrayConto.set(row, value);
+        Conto contello = arrayConto.get(row);
+        if (col == 0) {
+            contello.Data= value.toString();
+            //arrayConto.get(row).setData(value.toString());
+            arrayConto.set(row, contello);
+        }
+        if(col==1){
+            contello.Descrizione= value.toString();
+            //arrayConto.get(row).setDescrizione(value.toString());
+            arrayConto.set(row, contello);
+        }
+        if(col==2){
+            contello.Ammontare= Integer.parseInt(value.toString());
+            //arrayConto.get(row).setAmmontare(Integer.parseInt(value.toString()));
+            arrayConto.set(row, contello);
+        }
 
+        ScritturaFile s = new ScritturaFile();
+        s.ScriviNormale("dati.txt", arrayConto, "\n", false);
 
-        /*if (col ==1)
-            arrConto.set(row,c).setData(value);
-        if (col == 2)
-        // modifica la quantita'
-            c[row].Descrizione = ((String)value);
-        if (col == 3)
-        // modifica il prezzo
-            c[row].Ammontare = ((int)value);*/
-        // notifica il cambiamento
-        //fireTableDataChanged();
+        fireTableDataChanged();
     }
 
     /**
@@ -95,17 +134,9 @@ public class tab extends DefaultTableModel {
         return 3;
     }
 
-    @Override
-    public boolean isCellEditable(/*Object valore,*/ int row, int col) {
-        // celle editabili
 
-
-        /*if (col == 2)
-            b.Data = ((Integer)valore).intValue();
-        if (col == 3)
-            b.price = ((Float)valore).floatValue();*/
-
-        //fireTableDataChanged();
+   @Override
+    public boolean isCellEditable(int row, int col) {
         return true;
     }
 
