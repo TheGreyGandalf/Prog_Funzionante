@@ -1,0 +1,21 @@
+JFLAGS = -g
+JC = javac
+.SUFFIXES: .java .class
+.java.class:
+        $(JC) $(JFLAGS) $*.java
+
+CLASSES = \
+        Main.java \
+        Conto.java \
+        MyPanel.java \
+        tab.java \
+        ScritturaFile.java 
+
+default: classes
+
+classes: $(CLASSES:.java=.class)
+
+clean:
+        $(RM) *.class
+        
+#compila i file e rimuove alla fine tutti i .class così da evitare ogni volta di avere problemi
