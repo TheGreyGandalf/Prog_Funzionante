@@ -1,51 +1,23 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<repositories>
-
-    <repository>
-
-        <id>AsposeJavaAPI</id>
-
-        <name>Aspose Java API</name>
-
-        <url>https://releases.aspose.com/java/repo/</url>
-
-    </repository>
-
-</repositories>
-
 <dependencies>
 
 <dependency>
+    
+    <repositories>
 
-    <groupId>com.aspose</groupId>
+        <repository>
 
-    <artifactId>aspose-cells</artifactId>
+            <id>JExcelAPI</id>
 
-    <version>22.11</version>
+            <name>Aspose Java API</name>
 
-</dependency>
+            <url>https://jexcelapi.sourceforge.net/</url>
 
-<dependency>
+        </repository>
 
-    <groupId>com.aspose</groupId>
-
-    <artifactId>aspose-cells</artifactId>
-
-    <version>22.11</version>
-
-    <classifier>javadoc</classifier>
+    </repositories>
 
 </dependency>
 
 <dependency>
-
-    <groupId>org.bouncycastle</groupId>
-
-    <artifactId>bcprov-jdk15on</artifactId>
-
-    <version>1.60</version>
-
-</dependency>
-
-</dependencies>
