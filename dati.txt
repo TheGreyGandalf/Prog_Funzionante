@@ -7,9 +7,6 @@ Consegna Fornitore
 salsi
 Paolo
 123
-01/12/2002
-pipi_bll
-50
 1/12/2003
 Scarico merci
 123455
@@ -18,7 +15,10 @@ allora23
 -568
 20/2/1993
 Federico Barbacacca
-1000
+10000
 123
-Francescaa
+Francesca
+123
+1
+1453
 123

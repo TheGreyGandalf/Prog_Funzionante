@@ -1,8 +1,8 @@
 1/12/2002 Pippo_Casti 50
 1/12/23 Consegna Fornitore 522
 salsi Paolo 123
-01/12/2002 pipi_bll 50
 1/12/2003 Scarico merci 123455
 Mamma allora23 -568
-20/2/1993 Federico Barbacacca 1000
-123 Francescaa 123
+20/2/1993 Federico Barbacacca 10000
+123 Francesca 123
+1 1453 123

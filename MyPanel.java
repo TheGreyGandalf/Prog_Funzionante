@@ -5,6 +5,7 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -39,10 +40,15 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             // crea la tabella
             tm = new tab(lista);
             //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
+
             t = new JTable(tm);   // aggiunge la tabella al pannello
+            //t.add(new JScrollPane());
             tm.settaValori();
 
             //DefaultTableModel tm = new DefaultTableModel();
+
+            //ScritturaFile.fillData ajeje = new ScritturaFile.fillData(t, new File("spatagarru.xls"));
+            //ajeje.scriv();
 
             JPanel pTab = new JPanel();                 //pannello con tabella e header
             pTab.setLayout(new BorderLayout());
