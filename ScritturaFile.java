@@ -1,10 +1,10 @@
 import java.io.*;
 import java.util.ArrayList;
 
-import jxl.Workbook;                    //librearie per la scrittura in Excel
+/*import jxl.Workbook;                    //librearie per la scrittura in Excel
 import jxl.write.Label;
 import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
+import jxl.write.WritableWorkbook;*/
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -54,7 +54,7 @@ public class ScritturaFile {
     /**
      * Metodo per l'esportazione da JFrame a .xls
      */
-    static class fillData extends ScritturaFile{
+    /*static class fillData extends ScritturaFile{
     JTable t;
     File f;
 
@@ -78,8 +78,7 @@ public class ScritturaFile {
                 int j = 0;
                 for (int i = 0; i < model.getRowCount(); i++) {
                     for (j = 0; j < model.getColumnCount(); j++) {
-                        Label row = new Label(j, i + 1,
-                                model.getValueAt(i, j).toString());
+                        Label row = new Label(j, i + 1, model.getValueAt(i, j).toString());
                         sheet1.addCell(row);
                     }
                 }
@@ -89,5 +88,5 @@ public class ScritturaFile {
                 ex.printStackTrace();
             }
         }
-    }
+    }*/
 }

@@ -239,6 +239,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             if (lista.get(i).getDescrizione().contains(key) || lista.get(i).getData().contains(key) )
             {
                 this.txt2.setText("Trovato " + lista.get(i).getDescrizione() + " " + lista.get(i).getData());
+                t.changeSelection(i, 3, false , false);
                 return;
             }
             this.txt2.setText("Nessuno Trovato dalla ricerca");
