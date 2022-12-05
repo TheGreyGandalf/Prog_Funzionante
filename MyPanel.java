@@ -160,16 +160,11 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                                     ScritturaFile sc = new ScritturaFile();
                                     sc.ScriviNormale("dati.txt", lista, "\n", false);      //scrivo su file le modifiche
                                     //le scrivo su file
-                                    //ricarico la tabella coi nuovi dati aggiornati
-                                    /*Object[] row = new Object[3];
-                                    row[0]=ogg.Data;
-                                    row[1]=ogg.Descrizione;
-                                    row[2]=ogg.Ammontare;
-                                    tm.addRow(row);*/
-                                    tm.settaValori();
-                                    //t.repaint();                //funziona ma va a posti.
-                                    t.invalidate();
                                     f.dispose();
+                                    tm.settaValori();
+                                    t.repaint();                //funziona ma va a posti.
+                                    //t.invalidate();
+
 
 
                                 }
@@ -208,14 +203,11 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     ScritturaFile scr= new ScritturaFile();
                     int i = t.getSelectedRow();
                     lista.remove(i);                        //elimino elemento selezionato
-                    /*if(i >= 0){
-                        // remove a row from jtable
-                        tm.removeRow(i);                 //dovrebbe eliminare la riga
-                    }*/
+
                     scr.ScriviNormale("dati.txt", lista, "\n", false);
                     tm.settaValori();
-                    //t.repaint();                //funziona ma va a posti.
-                    t.invalidate();
+                    t.repaint();
+                    //t.invalidate();
                 }
             });
             this.add(elimina, BorderLayout.SOUTH);
@@ -239,6 +231,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             if (lista.get(i).getDescrizione().contains(key) || lista.get(i).getData().contains(key) )
             {
                 this.txt2.setText("Trovato " + lista.get(i).getDescrizione() + " " + lista.get(i).getData());
+                t.changeSelection(i, 3, false , false);
                 return;
             }
             this.txt2.setText("Nessuno Trovato dalla ricerca");
