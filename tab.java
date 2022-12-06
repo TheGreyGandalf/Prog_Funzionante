@@ -55,10 +55,25 @@ public class tab extends DefaultTableModel {
     }
 
     /**
+     * Metodo che aggiunge UNA sola riga per l'aggiunta e in diretta aggiunge il record
+     */
+    public void Cambia() {
+        String Dat, Desc;
+        int ammo;
+        int max = arrayConto.size()-1;
+        DefaultTableModel tavolam= tm;
+        JTable table = new JTable(tm);
+        Dat=arrayConto.get(max).getData();
+        Desc=arrayConto.get(max).getDescrizione();
+        ammo=arrayConto.get(max).getAmmontare();
+        tavolam.addRow(new Object[]{Dat, Desc, ammo});
+        fireTableDataChanged();
+    }
+
+    /**
      * Metodo che Assegna valori quando viene richiesto ed inserisce nuove righe con del
      * valore da far vedere
      */
-
     public void settaValori() {
         String Dat, Desc;
         int ammo;
@@ -72,10 +87,8 @@ public class tab extends DefaultTableModel {
             Dat=arrayConto.get(i).getData();
             Desc=arrayConto.get(i).getDescrizione();
             ammo=arrayConto.get(i).getAmmontare();
-            tm.insertRow(i, new Object[]{Dat, Desc, ammo});
-
+            tm.addRow(new Object[]{Dat, Desc, ammo});
         }
-
     }
 
     /**

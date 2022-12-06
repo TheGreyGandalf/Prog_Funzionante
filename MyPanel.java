@@ -157,16 +157,18 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                                     String c3 = campo3.getText();
                                     Conto ogg= new Conto(c1, c2, Integer.parseInt(c3));
                                     lista.add(ogg);                             //Aggiungo informazioni alla lista
+                                    f.dispose();
+                                    t.repaint();
+                                    //tm.addRow((new Object[]{c1, c2, Integer.parseInt(c3)}));
+                                    tm.Cambia();
+
                                     ScritturaFile sc = new ScritturaFile();
                                     sc.ScriviNormale("dati.txt", lista, "\n", false);      //scrivo su file le modifiche
                                     //le scrivo su file
-                                    f.dispose();
                                     tm.settaValori();
-                                    t.repaint();                //funziona ma va a posti.
+                                    t.repaint();
+
                                     //t.invalidate();
-
-
-
                                 }
                             });
                             this.add(pannelloInterno, BorderLayout.SOUTH);
@@ -205,7 +207,9 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     lista.remove(i);                        //elimino elemento selezionato
 
                     scr.ScriviNormale("dati.txt", lista, "\n", false);
+                    t.repaint();
                     tm.settaValori();
+                    //tm.Cambia();
                     t.repaint();
                     //t.invalidate();
                 }
