@@ -11,12 +11,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
+
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -33,16 +31,13 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         private tab tm;
 
         private JLabel l;
+        public int el=0;
 
     /**
      *
      * @param listaConto= La lista che contiene i dati che si andranno a leggere da stream di File
      */
     public MyPanel(ArrayList<Conto> listaConto) {
-            //super();
-
-            //this.setLayout(new BorderLayout());
-            //Vector v = new Vector();
             lista=listaConto;
 
 
@@ -53,12 +48,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
 
             t = new JTable(tm);   // aggiunge la tabella al pannello
             //t.add(new JScrollPane());
-            tm.settaValori();
-
-            //DefaultTableModel tm = new DefaultTableModel();
-
-            //Scrittura_File.ScritturaFile.fillData ajeje = new Scrittura_File.ScritturaFile.fillData(t, new File("spatagarru.xls"));
-            //ajeje.scriv();
+            tm.settaValori();               //metodo per assegnare glo oggetti alla tabella
 
             JPanel pTab = new JPanel();                 //pannello con tabella e header
             pTab.setLayout(new BorderLayout());
@@ -73,7 +63,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             JPanel pTab2 = new JPanel();                //secondo pannello con altri bottoni
             pTab2.setLayout(new BorderLayout());
             txt = new JTextField("", 25);
-            pTab2.add(txt, BorderLayout.CENTER);
+            pTab2.add(txt, BorderLayout.EAST);
             this.add(txt, BorderLayout.CENTER);
 
             txt2 = new JTextField("", 25);
@@ -93,10 +83,10 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                  */
                 public void actionPerformed(ActionEvent e)
                 {
-                    ricerca();
+                    el =ricerca(el);
                 }               //Quando viene cliccato il pulsante ricerca è presente un astion listener apposito
                 });
-            this.add(b, BorderLayout.CENTER);
+            this.add(b, BorderLayout.EAST);
 
             //pulsante di aggiunta di un nuovo record
 
@@ -288,19 +278,28 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
      * Funzione che preleva testo dal primo campo e va a ricercare corrispondenze
      */
 
-    public void ricerca()
+    public int ricerca(int v)
     {
+        int i=0;
+        Boolean check=false;
         String key = this.txt.getText();
         //int k2= Integer.parseInt(key);
-        for (int i=0; i< lista.size(); i++)
+        for (i=0; i< lista.size(); i++)
         {
             if (lista.get(i).getDescrizione().contains(key) || lista.get(i).getData().contains(key) )
             {
                 this.txt2.setText("Trovato " + lista.get(i).getDescrizione() + " " + lista.get(i).getData());
                 t.changeSelection(i, 3, false , false);
-                return;
+                check=true;
+                break;
             }
+        }
+        if (check) {
+            return i;
+        }
+        else {
             this.txt2.setText("Nessuno Trovato dalla ricerca");
+            return v+1;
         }
     }
 
@@ -328,37 +327,4 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
     public void changedUpdate(DocumentEvent e) {
 
     }
-
-    /*public static TableModel getModel() {
-        return model;
-    }
-
-
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        int column = e.getColumn();
-
-        // **** printf added below
-        System.out.printf("[row: %d, column: %d]%n", row, column);
-
-        model = (TableModel1) e.getSource();
-
-        String columnName = model.getColumnName(column);
-
-        // **** println added below
-        System.out.println("columnName: " + columnName);
-
-        Object data = model.getValueAt(row, column);
-
-        if (model.getValueAt(row, column) == Boolean.TRUE) {
-            System.out.println("Condition working");
-
-            // *** AIOOBE called here
-            model.removeRow(row);
-        }
-
-
-    }
-
-     */
 }
