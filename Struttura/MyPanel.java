@@ -12,18 +12,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class MyPanel extends JPanel implements ActionListener, DocumentListener {
 
         private JButton b;
-        private JButton nuova, elimina;
+        private JButton nuova, elimina, ButExcel, ButCsv, ButTxt;
 
         private ArrayList<Conto> lista;
 
-        public JTextField txt, txt2;
+        public JTextField txt, txt2, EtiExcel;
 
         private JTable t;
         private tab tm;
@@ -136,7 +140,10 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                             JPanel PanEtic = new JPanel();
                             PanBottoni.setLayout(new BorderLayout());
                             PanEtic.setLayout(new BorderLayout());
-                            campo1= new JTextField(15);                     //3 etichette in cui metto i nuovi campi
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                            LocalDateTime now = LocalDateTime.now();
+                            String odierno=dtf.format(now);
+                            campo1= new JTextField(odierno, 15);                     //3 etichette in cui metto i nuovi campi
                             campo2= new JTextField(15);
                             campo3= new JTextField(15);
                             et1= new JLabel("Data");
@@ -223,22 +230,57 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             });
             this.add(elimina, BorderLayout.SOUTH);
 
-            ScritturaFile s= new ScritturaFile();               //esportazione in csv
-            s.ScriviNormale("Struttura/pippo.txt", lista," ", false);
+        /**
+         * Pannello Esportazioni
+         */
 
-        File fif = new File("lollo.xls");
-        ScritturaFile.fillData follo = new ScritturaFile.fillData(t, fif);
-        follo.scriv();
+            JPanel export = new JPanel();
+            ButExcel = new JButton("Esporta in formato Excel");
+            export.setLayout(new BorderLayout());
+            export.add(ButExcel, BorderLayout.SOUTH);
+            EtiExcel = new JTextField("Nome File Esportazione", 10);
+            export.add(EtiExcel, BorderLayout.CENTER);
+            ButExcel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Utente = EtiExcel.getText();
+                    File fif = new File(Utente+".xls");
+                    ScritturaFile.fillData OnExc = new ScritturaFile.fillData(t, fif);
+                    OnExc.scriv();
+                }
+            });
+            this.add(export, BorderLayout.CENTER);
+
+            JPanel export2 = new JPanel();
+            ButCsv = new JButton("Esporta in formato CSV");
+            export2.setLayout(new BorderLayout());
+            export2.setLayout(new BorderLayout());
+            export2.add(ButCsv, BorderLayout.CENTER);
+            ButExcel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Utente = EtiExcel.getText();
+                    ScritturaFile OnCsv = new ScritturaFile();
+                    OnCsv.ScriviNormale(Utente+".csv", lista,",", false);
+                }
+            });
+            this.add(export2, BorderLayout.CENTER);
 
 
-
-        /*String a="./lollo.xls";
-        try {
-            r.writeToExcel(t, a);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
-
+            JPanel export3 = new JPanel();
+            ButTxt = new JButton("Esporta in formato Txt");
+            export3.setLayout(new BorderLayout());
+            export3.setLayout(new BorderLayout());
+            export3.add(ButTxt, BorderLayout.CENTER);
+            ButExcel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Utente = EtiExcel.getText();
+                    ScritturaFile OnCsv = new ScritturaFile();
+                    OnCsv.ScriviNormale(Utente+".txt", lista,"\n", false);
+                }
+            });
+            this.add(export3, BorderLayout.CENTER);
 
     }
 
