@@ -2,6 +2,7 @@ package Struttura;
 
 import Classe_Conto.Conto;                  //classi dei package
 import Scrittura_File.ScritturaFile;
+//import org.apache.poi.sl.draw.geom.Path;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -9,6 +10,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -191,6 +194,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     f.setDefaultCloseOperation(EXIT_ON_CLOSE);
                     f.setLocationRelativeTo(null);
                     f.setVisible(true);
+
                 }
             });
             this.add(nuova, BorderLayout.EAST);
@@ -222,8 +226,21 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             ScritturaFile s= new ScritturaFile();               //esportazione in csv
             s.ScriviNormale("Struttura/pippo.txt", lista," ", false);
 
+        File fif = new File("lollo.xls");
+        ScritturaFile.fillData follo = new ScritturaFile.fillData(t, fif);
+        follo.scriv();
 
-        }
+
+
+        /*String a="./lollo.xls";
+        try {
+            r.writeToExcel(t, a);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }*/
+
+
+    }
 
     /**
      * Funzione che preleva testo dal primo campo e va a ricercare corrispondenze

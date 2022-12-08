@@ -1,6 +1,7 @@
 package Main;
 
 import Classe_Conto.*;
+import Scrittura_File.ScritturaFile;
 import Struttura.*;
 
 import javax.swing.*;
@@ -45,6 +46,9 @@ public class Main {
         f.setVisible(true);
         //chiusura file di testo
         scan.close();
+
+
+        //r.writetoexcell;
         //leggi.close();
     }
 }

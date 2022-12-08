@@ -1,14 +1,15 @@
 package Scrittura_File;
 
 import Classe_Conto.Conto;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
 
 import java.io.*;
 import java.util.ArrayList;
 
-/*import jxl.Workbook;                    //librearie per la scrittura in Excel
+import jxl.Workbook;                    //librearie per la scrittura in Excel
 import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;*/
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -33,7 +34,7 @@ public class ScritturaFile {
             FileWriter fw = new FileWriter(file, tipo);         //passo file e se scrivo in append
             pw = new PrintWriter(fw);               //Strumento con cui vado a scrivere su file
 
-            for (int i=0;i<lista.size();i++)            //Scrttura su file di tutto il contenuto
+            for (int i=0;i<lista.size();i++)            //Scrittura su file di tutto il contenuto
             {
                 String Dat, Desc;
                 int ammo;
@@ -56,13 +57,44 @@ public class ScritturaFile {
     }
 
     /**
+     *
+     * @param table  La tabella che si Vuole salvare
+     * @param path   Il percorso che si deve compiere per il file
+     * @throws FileNotFoundException   Errore in caso il file non esista
+     * @throws IOException Errore in caso si inserisce una carattere non valido
+     */
+
+    /*public void writeToExcel(JTable table, String path) throws FileNotFoundException, IOException {
+        //new WorkbookFactory();
+        Workbook wb = new XSSFWorkbook(); //Excel workbook
+        Sheet sheet = wb.createSheet(); //WorkSheet
+        Row row = sheet.createRow(2); //Row created at line 3
+        TableModel model = table.getModel(); //Table model
+
+        Row headerRow = sheet.createRow(0); //Create row at line 0
+        for(int headings = 0; headings < model.getColumnCount(); headings++){ //For each column
+            headerRow.createCell(headings).setCellValue(model.getColumnName(headings));//Write column name
+        }
+
+        for(int rows = 0; rows < model.getRowCount(); rows++){ //For each table row
+            for(int cols = 0; cols < table.getColumnCount(); cols++){ //For each table column
+                row.createCell(cols).setCellValue(model.getValueAt(rows, cols).toString()); //Write value
+            }
+
+            //Set the row to the next one in the sequence
+            row = sheet.createRow((rows + 3));
+        }
+        wb.write(new FileOutputStream(path.toString()));//Save the file
+    }*/
+
+    /**
      * Metodo per l'esportazione da JFrame a .xls
      */
-    /*static class fillData extends Scrittura_File.ScritturaFile{
+    public static class fillData extends Scrittura_File.ScritturaFile{
     JTable t;
     File f;
 
-    fillData(JTable table, File file)
+    public fillData(JTable table, File file)
         {
             t=table;
             f=file;
@@ -92,5 +124,6 @@ public class ScritturaFile {
                 ex.printStackTrace();
             }
         }
-    }*/
+    }
+
 }

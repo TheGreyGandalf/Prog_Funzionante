@@ -3,6 +3,6 @@
 salsi Paolo 123
 1/12/2003 Scarico merci 123455
 Mamma allora23 -568
-20/2/1993 Federico Barbacacca 10000
 6/12/2022 Consegna fornitore -50000
 6/12/2022 Manuele 12345
+5/6/2023 Ordine 56230
