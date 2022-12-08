@@ -5,11 +5,11 @@ JC = javac
         $(JC) $(JFLAGS) $*.java
 
 CLASSES = \
-        Main.java \
-        Conto.java \
-        MyPanel.java \
-        tab.java \
-        ScritturaFile.java 
+        Main.Main.java \
+        Classe_Conto.Conto.java \
+        Struttura.MyPanel.java \
+        Struttura.tab.java \
+        Scrittura_File.ScritturaFile.java
 
 default: classes
 

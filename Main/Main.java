@@ -1,7 +1,10 @@
+package Main;
+
+import Classe_Conto.*;
+import Struttura.*;
+
 import javax.swing.*;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -11,7 +14,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public class Main {
     public static void main(String[] args) throws IOException {
         JFrame f = new JFrame("Programma Esame Oggetti");
-        File fil= new File("dati.txt");                     //file da cui leggiami i dati
+        File fil= new File("Struttura/dati.txt");                     //file da cui leggiami i dati
         //BufferedReader leggi=new BufferedReader(new FileReader(fil));
         Scanner scan =new Scanner((fil));
 
