@@ -2,7 +2,6 @@ package Struttura;
 
 import Classe_Conto.Conto;                  //classi dei package
 import Scrittura_File.ScritturaFile;
-//import org.apache.poi.sl.draw.geom.Path;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -25,7 +24,11 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
 
         private ArrayList<Conto> lista;
 
-        public JTextField txt, txt2, EtiExcel;
+        private JTextField txt, txt2, EtiExcel;
+
+        private JTextField periodo_1, periodo_2;     //campi per inserimento periodo
+        private JButton Giorno, Settimana, Mese, Anno, Periodo;  //pulsanti per vari tipi di raggruppamenti
+
 
         private JTable t;
         private tab tm;
@@ -59,11 +62,39 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             //pTab.add(new JScrollPane(t));
             this.add(pTab, BorderLayout.NORTH);
 
+            /**
+             * Pannello con ricerca per data
+             */
+            JPanel panGio = new JPanel();
+            panGio.setLayout(new BorderLayout());
+            periodo_1 = new JTextField("Periodo Inizio", 10);
+            periodo_2 = new JTextField("Periodo fine", 10);
+            panGio.add(periodo_1, BorderLayout.WEST);
+            panGio.add(periodo_2, BorderLayout.EAST);
+            this.add(panGio, BorderLayout.CENTER);
+
+            JPanel panGioBott = new JPanel();
+            panGioBott.setLayout(new BorderLayout());
+            Giorno=new JButton("Ricerca per Giorno");
+            Settimana =new JButton("Ricerca per Settimana");
+            Mese= new JButton("Ricerca per Settimana");
+            Anno = new JButton("Ricerca per Mese");
+            Periodo=new JButton("Ricerca per Periodo arbitrario");
+            panGioBott.add(Giorno, BorderLayout.NORTH);
+            panGioBott.add(Settimana, BorderLayout.WEST);
+            panGioBott.add(Mese, BorderLayout.CENTER);
+            panGioBott.add(Anno, BorderLayout.EAST);
+            panGioBott.add(Periodo, BorderLayout.SOUTH);
+            this.add(panGioBott, BorderLayout.EAST);
+
+            /**
+            * Pannello con Ricerca per carattere
+            */
 
             JPanel pTab2 = new JPanel();                //secondo pannello con altri bottoni
             pTab2.setLayout(new BorderLayout());
             txt = new JTextField("", 25);
-            pTab2.add(txt, BorderLayout.EAST);
+            pTab2.add(txt, BorderLayout.CENTER);
             this.add(txt, BorderLayout.CENTER);
 
             txt2 = new JTextField("", 25);
@@ -86,7 +117,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     el =ricerca(el);
                 }               //Quando viene cliccato il pulsante ricerca è presente un astion listener apposito
                 });
-            this.add(b, BorderLayout.EAST);
+            this.add(b, BorderLayout.CENTER);
 
             //pulsante di aggiunta di un nuovo record
 
@@ -327,4 +358,5 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
     public void changedUpdate(DocumentEvent e) {
 
     }
+
 }

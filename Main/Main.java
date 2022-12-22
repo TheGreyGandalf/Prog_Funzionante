@@ -15,8 +15,9 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public class Main {
     public static void main(String[] args) throws IOException {
         JFrame f = new JFrame("Programma Esame Oggetti");
-        File fil= new File("Struttura/dati.txt");                     //file da cui leggiami i dati
+        File fil= new File("Struttura/dati.txt");                     //file da cui leggiamo i dati
         //BufferedReader leggi=new BufferedReader(new FileReader(fil));
+        //JOptionPane.showMessageDialog(null, "This is an alert box.");
         Scanner scan =new Scanner((fil));
 
         //variabili per inserire i valori nell'array
@@ -46,9 +47,6 @@ public class Main {
         f.setVisible(true);
         //chiusura file di testo
         scan.close();
-
-
-        //r.writetoexcell;
-        //leggi.close();
+        
     }
 }
