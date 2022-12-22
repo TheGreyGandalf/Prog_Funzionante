@@ -10,8 +10,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 
 
@@ -81,10 +84,40 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             Anno = new JButton("Ricerca per Mese");
             Periodo=new JButton("Ricerca per Periodo arbitrario");
             panGioBott.add(Giorno, BorderLayout.NORTH);
+            Giorno.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    perio(periodo_1.getText(), "", 1);     //passo le 2 date e quanti giorni
+                }
+            });
             panGioBott.add(Settimana, BorderLayout.WEST);
+            Settimana.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    perio(periodo_1.getText(), "", 7);     //passo le 2 date e quanti giorni
+                }
+            });
             panGioBott.add(Mese, BorderLayout.CENTER);
+            Mese.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    perio(periodo_1.getText(), "", 30);     //passo le 2 date e quanti giorni
+                }
+            });
             panGioBott.add(Anno, BorderLayout.EAST);
+            Anno.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    perio(periodo_1.getText(), "", 365);     //passo le 2 date e quanti giorni
+                }
+            });
             panGioBott.add(Periodo, BorderLayout.SOUTH);
+            Periodo.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    perio(periodo_1.getText(), periodo_2.getText(), 0);     //passo le 2 date e quanti giorni
+                }
+            });
             this.add(panGioBott, BorderLayout.EAST);
 
             /**
@@ -302,6 +335,26 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                 }
             });
             this.add(export3, BorderLayout.CENTER);
+
+    }
+
+    /**
+     *
+     * @param primo Primo parametro che specifica Inizio periodo
+     * @param Secondo Secondo parametro che specifica quando termina il periodo
+     */
+    public void perio(String primo, String Secondo, int gg){
+
+
+        Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(primo);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if () {
+            JOptionPane.showMessageDialog(null, "Back to the future?");
+            return;
+        }
+
 
     }
 

@@ -31,7 +31,6 @@ public class Main {
             Dat= scan.nextLine();
             Desc= scan.nextLine();
             ammo= Integer.parseInt(scan.nextLine());
-            //System.out.println("Valor di j"+j);
             Conto ogg= new Conto(Dat, Desc, ammo);
             arr.add(ogg);
         }
