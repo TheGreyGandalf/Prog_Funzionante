@@ -10,12 +10,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -80,8 +84,8 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             panGioBott.setLayout(new BorderLayout());
             Giorno=new JButton("Ricerca per Giorno");
             Settimana =new JButton("Ricerca per Settimana");
-            Mese= new JButton("Ricerca per Settimana");
-            Anno = new JButton("Ricerca per Mese");
+            Mese= new JButton("Ricerca per Mese");
+            Anno = new JButton("Ricerca per Anno");
             Periodo=new JButton("Ricerca per Periodo arbitrario");
             panGioBott.add(Giorno, BorderLayout.NORTH);
             Giorno.addActionListener(new ActionListener() {
@@ -338,21 +342,80 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
 
     }
 
+
     /**
      *
-     * @param primo Primo parametro che specifica Inizio periodo
-     * @param Secondo Secondo parametro che specifica quando termina il periodo
+     * @param gg I giorni da sottrarre
+     * @param passato1 Periodo di inizio
+     * @param passato2 Periodo di fine
+     * @return Array con periodi aggiustati
      */
-    public void perio(String primo, String Secondo, int gg){
+    public ArrayList<Conto> sottrai(long gg, LocalDate passato1, LocalDate passato2){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        ArrayList<Conto> Listaperiodo;
+        Listaperiodo=lista;
+
+        if(passato2==null) {
+            LocalDate returnvalue = passato1.minusDays(gg);
+
+            for (int i = 0; i < Listaperiodo.size(); i++) {
+                LocalDate pippo = LocalDate.parse(Listaperiodo.get(i).Data, dtf);
+                if (pippo.isAfter(passato1) || pippo.isBefore(returnvalue)) {
+                    Listaperiodo.remove(i);
+                }
+            }
+        }
+        else{
+            for (int i = 0; i < Listaperiodo.size(); i++) {
+                LocalDate pippo = LocalDate.parse(Listaperiodo.get(i).Data, dtf);
+                if (pippo.isAfter(passato1) || pippo.isBefore(passato2)) {
+                    Listaperiodo.remove(i);
+                }
+            }
+
+        }
 
 
-        Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(primo);
 
+        return Listaperiodo;
+
+    }
+
+    /**
+     *
+     * @param Primo Primo parametro che specifica Inizio periodo
+     * @param Secondo Secondo parametro che specifica quando termina il periodo
+     * @param gg Il periodo di tempo in giorni che si vuole vedere
+     */
+    public void perio(String Primo, String Secondo, int gg){
+        ArrayList<Conto> Listaperiodo;
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDateTime now = LocalDateTime.now();
+        now.format(dtf);
+        LocalDate passato1 = LocalDate.parse(Primo, dtf);
+        LocalDate nullo = null;
 
-        if () {
+        //LocalDateTime now = LocalDateTime.now();
+
+        if (passato1.isAfter(now.toLocalDate())) {
             JOptionPane.showMessageDialog(null, "Back to the future?");
             return;
+        }
+
+        Listaperiodo=sottrai(gg, passato1, nullo);
+
+        if(gg==0)
+        {
+            LocalDate passato2 = LocalDate.parse(Secondo, dtf);
+            if (passato2.isAfter(now.toLocalDate())) {
+                JOptionPane.showMessageDialog(null, "Back to the future?");
+                return;
+            }
+            else
+            {
+                sottrai(gg, passato1, passato2);
+            }
         }
 
 
