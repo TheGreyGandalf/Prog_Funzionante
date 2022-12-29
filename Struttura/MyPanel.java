@@ -6,20 +6,15 @@ import Scrittura_File.ScritturaFile;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.ArrayList;
-import java.util.Locale;
 
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -30,6 +25,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         private JButton nuova, elimina, ButExcel, ButCsv, ButTxt;
 
         private ArrayList<Conto> lista;
+        private ArrayList<Conto> NuovaL;            //Lista dopo una modifica al periodo
 
         private JTextField txt, txt2, EtiExcel;
 
@@ -75,7 +71,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             JPanel panGio = new JPanel();
             panGio.setLayout(new BorderLayout());
             periodo_1 = new JTextField("Periodo Inizio", 10);
-            periodo_2 = new JTextField("Periodo fine", 10);
+            periodo_2 = new JTextField("Periodo Fine", 10);
             panGio.add(periodo_1, BorderLayout.WEST);
             panGio.add(periodo_2, BorderLayout.EAST);
             this.add(panGio, BorderLayout.CENTER);
@@ -353,7 +349,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
     public ArrayList<Conto> sottrai(long gg, LocalDate passato1, LocalDate passato2){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ArrayList<Conto> Listaperiodo;
-        Listaperiodo=lista;
+        Listaperiodo=new ArrayList<Conto>(lista);           //copia per valore
 
         if(passato2==null) {
             LocalDate returnvalue = passato1.minusDays(gg);
@@ -365,50 +361,72 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                 }
             }
         }
-        else{
+        else
+        {
             for (int i = 0; i < Listaperiodo.size(); i++) {
                 LocalDate pippo = LocalDate.parse(Listaperiodo.get(i).Data, dtf);
-                if (pippo.isAfter(passato1) || pippo.isBefore(passato2)) {
+                if (pippo.isBefore(passato1) || pippo.isAfter(passato2)) {
                     Listaperiodo.remove(i);
                 }
             }
-
         }
+        String Dat, Desc;
+        int ammo;
+        JFrame frame = new JFrame();
+        DefaultTableModel model = new DefaultTableModel();
+        JTable tabellina = new JTable(model);
+        for (int i = 0; i < Listaperiodo.size(); i++) {
+            Dat=Listaperiodo.get(i).getData();
+            Desc=Listaperiodo.get(i).getDescrizione();
+            ammo=Listaperiodo.get(i).getAmmontare();
+            model.addRow(new Object[]{Dat, Desc, ammo});
+        }
+        tabellina.setModel(model);
+        frame.setLayout(null);
+        frame.add(tabellina);
 
+        frame.setLayout(new BorderLayout());
+        frame.add(tabellina, BorderLayout.CENTER);
+        this.add(tabellina, BorderLayout.NORTH);
 
-
+        tm.settaValori();
+        t.repaint();
         return Listaperiodo;
-
     }
 
     /**
-     *
-     * @param Primo Primo parametro che specifica Inizio periodo
+     * @param Primo   Primo parametro che specifica Inizio periodo
      * @param Secondo Secondo parametro che specifica quando termina il periodo
-     * @param gg Il periodo di tempo in giorni che si vuole vedere
+     * @param gg      Il periodo di tempo in giorni che si vuole vedere
+     * @return
      */
     public void perio(String Primo, String Secondo, int gg){
+        tm.settaValori();
+        t.repaint();
         ArrayList<Conto> Listaperiodo;
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         now.format(dtf);
         LocalDate passato1 = LocalDate.parse(Primo, dtf);
         LocalDate nullo = null;
 
-        //LocalDateTime now = LocalDateTime.now();
-
-        if (passato1.isAfter(now.toLocalDate())) {
+        if (passato1.isAfter(now)) {
             JOptionPane.showMessageDialog(null, "Back to the future?");
             return;
         }
 
-        Listaperiodo=sottrai(gg, passato1, nullo);
-
-        if(gg==0)
+        if(gg!=0)
         {
+            sottrai(gg, passato1, nullo);
+        }
+        else
+        {
+            if ((Secondo.equals("Periodo Fine") || Secondo.isEmpty() || Primo.equals("Periodo Inizio") || (Primo.isEmpty()))) {
+                JOptionPane.showMessageDialog(null, "Inserire secondo Periodo");
+                return;
+            }
             LocalDate passato2 = LocalDate.parse(Secondo, dtf);
-            if (passato2.isAfter(now.toLocalDate())) {
+            if (passato2.isAfter(now)) {
                 JOptionPane.showMessageDialog(null, "Back to the future?");
                 return;
             }
@@ -417,12 +435,12 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                 sottrai(gg, passato1, passato2);
             }
         }
-
-
+        return;
     }
 
     /**
      * Funzione che preleva testo dal primo campo e va a ricercare corrispondenze
+     * 
      */
 
     public int ricerca(int v)
