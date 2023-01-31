@@ -1,18 +1,24 @@
 package Scrittura_File;
 
 import Classe_Conto.Conto;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-
-
-import java.io.*;
-import java.util.ArrayList;
-
-import jxl.Workbook;                    //librearie per la scrittura in Excel
-import jxl.write.Label;
+import Struttura.tab;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableModel;
+import java.io.*;
+import java.util.ArrayList;
+import org.jopendocument.dom.OOUtils;
+import org.jopendocument.dom.spreadsheet.*;
+
+/*
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
+import jxl.Workbook;                    //librearie per la scrittura in Excel
+import jxl.write.Label;
+*/
+
 
 /**
  * Classe che implementa i metodi di una scrittura su file, qui verrà anche implementata
@@ -56,6 +62,10 @@ public class ScritturaFile {
         }
     }
 
+    private void LeggiFile(File f){
+
+    }
+
     /**
      *
      * @param table  La tabella che si Vuole salvare
@@ -87,19 +97,49 @@ public class ScritturaFile {
         wb.write(new FileOutputStream(path.toString()));//Save the file
     }*/
 
+    public void OpenDoc(File f, ArrayList<Conto> Valori)
+    {
+        // Create the data to save.
+        final Object[][] data = new Object[Valori.size()][3];
+        for (int i = 0; i < Valori.size(); i++) {
+            data[i]= new Object[] {Valori.get(i).getData(), Valori.get(i).getDescrizione(), Valori.get(i).getAmmontare()};
+        }
+
+        String[] columns = new String[] {"Data", "Descrizione", "Ammontare"};
+
+        TableModel model = new DefaultTableModel(data, columns);
+
+        // Save the data to an ODS file and open it.
+        try {
+            SpreadSheet.createEmpty(model).saveAs(f);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            OOUtils.open(f);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Metodo per l'esportazione da JFrame a .xls
      */
-    public static class fillData extends Scrittura_File.ScritturaFile{
-    JTable t;
-    File f;
+    public static class fillData extends Scrittura_File.ScritturaFile {
+        JTable t;
+        File f;
 
-    public fillData(JTable table, File file)
-        {
-            t=table;
-            f=file;
+        public fillData(JTable table, File file) {
+            t = table;
+            f = file;
         }
+    }
 
+}
+
+
+        /*                  ClASSE PER SCRITTURA SU EXCEL
         public void scriv(){
             try {
 
@@ -127,3 +167,4 @@ public class ScritturaFile {
     }
 
 }
+         */

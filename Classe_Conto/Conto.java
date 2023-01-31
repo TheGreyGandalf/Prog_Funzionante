@@ -5,6 +5,8 @@ public class Conto {
     public String Descrizione;
     public int Ammontare;
 
+    Boolean cercato;
+
     /**
      *
      * @param Da= Parametro che definisce un campo data
@@ -22,6 +24,7 @@ public class Conto {
         this.Data="";
         this.Descrizione="De";
         this.Ammontare=0;
+        this.cercato=false;
     }
 
     public int getAmmontare() {
@@ -36,6 +39,10 @@ public class Conto {
         return Descrizione;
     }
 
+    public Boolean getCercato() {
+        return cercato;
+    }
+
     public void setAmmontare(int ammontare) {
         Ammontare = ammontare;
     }
@@ -47,4 +54,9 @@ public class Conto {
     public void setDescrizione(String descrizione) {
         Descrizione = descrizione;
     }
+
+    public void setCercato(Boolean cercato) {
+        this.cercato = cercato;
+    }
 }
+

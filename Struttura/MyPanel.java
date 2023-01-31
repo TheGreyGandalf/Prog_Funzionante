@@ -13,8 +13,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -22,7 +24,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public class MyPanel extends JPanel implements ActionListener, DocumentListener {
 
         private JButton b;
-        private JButton nuova, elimina, ButExcel, ButCsv, ButTxt;
+        private JButton nuova, elimina, ButExcel, ButCsv, ButTxt, Importa;
 
         private ArrayList<Conto> lista;
         private ArrayList<Conto> NuovaL;            //Lista dopo una modifica al periodo
@@ -30,7 +32,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         private JTextField txt, txt2, EtiExcel;
 
         private JTextField periodo_1, periodo_2;     //campi per inserimento periodo
-        private JButton Giorno, Settimana, Mese, Anno, Periodo;  //pulsanti per vari tipi di raggruppamenti
+        private JButton Giorno, Settimana, Mese, Anno, Periodo, Prossimo;  //pulsanti per vari tipi di raggruppamenti
 
 
         private JTable t;
@@ -135,14 +137,15 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             pTab2.add(txt2, BorderLayout.CENTER);
             this.add(txt2, BorderLayout.CENTER);
 
-
+            //secondo pannello NORD:Cerca un utente, CENTRO:Prossimo, EST:Nuova, SUD:Elimina,
             JPanel p = new JPanel();
             p.setLayout(new BorderLayout());
             b= new JButton("Cerca Un Utente");
-            pTab2.add(b, BorderLayout.CENTER);
+            Prossimo= new JButton("Prossimo Match");
+            p.add(b, BorderLayout.NORTH);
+            p.add(Prossimo, BorderLayout.CENTER);
             b.addActionListener(new ActionListener(){                   //Bottone che fa partire la ricerca da una stringa
                 /**
-                 *
                  * @param e Evento in caso si cercasse un campo all'interno dei campi salvati
                  */
                 public void actionPerformed(ActionEvent e)
@@ -150,7 +153,13 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     el =ricerca(el);
                 }               //Quando viene cliccato il pulsante ricerca è presente un astion listener apposito
                 });
-            this.add(b, BorderLayout.CENTER);
+            Prossimo.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    RicercaSuccessivo();
+                }
+            });
+            //this.add(p, BorderLayout.CENTER);
 
             //pulsante di aggiunta di un nuovo record
 
@@ -282,25 +291,26 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     //t.invalidate();
                 }
             });
-            this.add(elimina, BorderLayout.SOUTH);
+        this.add(p, BorderLayout.WEST);
 
         /**
-         * Pannello Esportazioni
+         * Pannello Esportazioni, Terzo pannello
          */
 
             JPanel export = new JPanel();
-            ButExcel = new JButton("Esporta in formato Excel");
+            ButExcel = new JButton("Esporta in formato OpenDocument");
             export.setLayout(new BorderLayout());
             export.add(ButExcel, BorderLayout.SOUTH);
-            EtiExcel = new JTextField("Nome File Esportazione", 10);
+            EtiExcel = new JTextField("Nome File Export/Import", 10);
             export.add(EtiExcel, BorderLayout.CENTER);
             ButExcel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
-                    File fif = new File(Utente+".xls");
-                    ScritturaFile.fillData OnExc = new ScritturaFile.fillData(t, fif);
-                    OnExc.scriv();
+                    File fif = new File(Utente+".ods");
+                    ScritturaFile.fillData OnOpe = new ScritturaFile.fillData(t, fif);
+                    OnOpe.OpenDoc(fif, lista);          //scrttura su open document
+                    //OnExc.scriv();   COMMENTATA SCRITTURA SU EXCEL
                 }
             });
             this.add(export, BorderLayout.CENTER);
@@ -323,9 +333,10 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
 
             JPanel export3 = new JPanel();
             ButTxt = new JButton("Esporta in formato Txt");
-            export3.setLayout(new BorderLayout());
+            Importa = new JButton("Importa da File");
             export3.setLayout(new BorderLayout());
             export3.add(ButTxt, BorderLayout.CENTER);
+            export3.add(Importa, BorderLayout.SOUTH);
             ButExcel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -334,10 +345,16 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     OnCsv.ScriviNormale(Utente+".txt", lista,"\n", false);
                 }
             });
-            this.add(export3, BorderLayout.CENTER);
+            Importa.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    File fil= new File(EtiExcel.getText());
+
+                }
+            });
+            this.add(export3, BorderLayout.SOUTH);
 
     }
-
 
     /**
      *
@@ -346,21 +363,66 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
      * @param passato2 Periodo di fine
      * @return Array con periodi aggiustati
      */
-    public ArrayList<Conto> sottrai(long gg, LocalDate passato1, LocalDate passato2){
+    public ArrayList<Conto> sottrai(int gg, LocalDate passato1, LocalDate passato2){
+        //proviamo ad ignorare periodo2, facciamo a piccoli passi
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        ArrayList<Conto> Listaperiodo;
-        Listaperiodo=new ArrayList<Conto>(lista);           //copia per valore
+        ArrayList<Conto> Listaperiodo=new ArrayList<Conto>();              //Lista che conterrà il periodo effettivo interessato
 
-        if(passato2==null) {
-            LocalDate returnvalue = passato1.minusDays(gg);
+        //LocalDate PeriodoSottratto;
+        /*if(passato2==null) {*/
 
-            for (int i = 0; i < Listaperiodo.size(); i++) {
-                LocalDate pippo = LocalDate.parse(Listaperiodo.get(i).Data, dtf);
-                if (pippo.isAfter(passato1) || pippo.isBefore(returnvalue)) {
-                    Listaperiodo.remove(i);
+        LocalDate PeriodoSottratto;
+        LocalDate per;
+            //PeriodoSottratto.format(dtf);
+
+        switch(gg){
+            case (1):
+                for (Conto c:lista) {
+                    per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
+                    if (c.getData().equals(passato1)) {
+                        Listaperiodo.add(c);
+                    }
                 }
-            }
+                break;
+            case (7):
+                PeriodoSottratto = passato1.minus(Period.ofDays(7));
+                for (Conto c:lista) {
+                    per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
+                    if (Period.between(per,PeriodoSottratto).getDays() <= 0) {
+                        Listaperiodo.add(c);
+                    }
+                }
+                break;
+            case(30):
+                PeriodoSottratto = passato1.minus(Period.ofDays(30));
+                for (Conto c:lista) {
+                    per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
+                    if (Period.between(per,PeriodoSottratto).getDays() <= 0) {
+                        Listaperiodo.add(c);
+                    }
+                }
+            case(365):
+                PeriodoSottratto = passato1.minus(Period.ofDays(365));
+                for (Conto c:lista) {
+                    per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
+                    if (Period.between(per,PeriodoSottratto).getDays() <= 0) {
+                        Listaperiodo.add(c);
+                    }
+                }
+            break;
+
         }
+            //ArrayList<Integer> segnaind= new ArrayList();
+
+                //String formattedDate = myDateObj.format(myFormatObj);
+                /*
+                if (per.isBefore(PeriodoSottratto) || per.isAfter(passato1)) {
+                    System.out.println(i);
+                    Listaperiodo.remove(i);
+                    //Listaperiodo.remove(i);
+                    }
+                 */
+        /*}             //Periodo2 Al momento non interessa
         else
         {
             for (int i = 0; i < Listaperiodo.size(); i++) {
@@ -369,18 +431,22 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     Listaperiodo.remove(i);
                 }
             }
-        }
+        }*/
+
+        DefaultTableModel model = new DefaultTableModel();
         String Dat, Desc;
         int ammo;
-        JFrame frame = new JFrame();
-        DefaultTableModel model = new DefaultTableModel();
-        JTable tabellina = new JTable(model);
+
         for (int i = 0; i < Listaperiodo.size(); i++) {
             Dat=Listaperiodo.get(i).getData();
             Desc=Listaperiodo.get(i).getDescrizione();
             ammo=Listaperiodo.get(i).getAmmontare();
             model.addRow(new Object[]{Dat, Desc, ammo});
         }
+
+        JFrame frame = new JFrame();
+
+        JTable tabellina = new JTable(model);
         tabellina.setModel(model);
         frame.setLayout(null);
         frame.add(tabellina);
@@ -400,6 +466,10 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
      * @param gg      Il periodo di tempo in giorni che si vuole vedere
      * @return
      */
+
+    /**
+     *Ho bisogno di riconvertire quando lo ricerco nell'elenco!!!
+     */
     public void perio(String Primo, String Secondo, int gg){
         tm.settaValori();
         t.repaint();
@@ -408,6 +478,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         LocalDate now = LocalDate.now();
         now.format(dtf);
         LocalDate passato1 = LocalDate.parse(Primo, dtf);
+        //LocalDate passato2 = LocalDate.parse(Secondo, dtf);
         LocalDate nullo = null;
 
         if (passato1.isAfter(now)) {
@@ -435,12 +506,11 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                 sottrai(gg, passato1, passato2);
             }
         }
-        return;
     }
 
     /**
      * Funzione che preleva testo dal primo campo e va a ricercare corrispondenze
-     * 
+     * È iniziata una nuova ricerca, si azzerano le ricerche precedenti
      */
 
     public int ricerca(int v)
@@ -448,6 +518,8 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         int i=0;
         Boolean check=false;
         String key = this.txt.getText();
+        NuovaL=lista;
+        flush();            //pulisce le classi segnate come già cercate
         //int k2= Integer.parseInt(key);
         for (i=0; i< lista.size(); i++)
         {
@@ -455,6 +527,8 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             {
                 this.txt2.setText("Trovato " + lista.get(i).getDescrizione() + " " + lista.get(i).getData());
                 t.changeSelection(i, 3, false , false);
+                NuovaL.get(i).setCercato(true);
+                NuovaL=lista;
                 check=true;
                 break;
             }
@@ -465,6 +539,29 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         else {
             this.txt2.setText("Nessuno Trovato dalla ricerca");
             return v+1;
+        }
+    }
+
+    private void flush()
+    {
+        for (int j=0; j<lista.size(); j++)
+        {
+            lista.get(j).setCercato(false);
+            NuovaL.get(j).setCercato(false);
+        }
+    }
+
+    private void RicercaSuccessivo(){
+        String key = this.txt.getText();
+        for (int i = 0; i < NuovaL.size(); i++) {
+            if ((NuovaL.get(i).getDescrizione().contains(key) || NuovaL.get(i).getData().contains(key))
+                    && NuovaL.get(i).getCercato()!=true )
+            {
+                this.txt2.setText("Trovato " + NuovaL.get(i).getDescrizione() + " " + NuovaL.get(i).getData());
+                t.changeSelection(i, 3, false , false);
+                NuovaL.get(i).setCercato(true);
+                break;
+            }
         }
     }
 

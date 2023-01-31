@@ -1,7 +1,7 @@
 package Main;
 
-import Classe_Conto.*;
-import Struttura.*;
+import Classe_Conto.Conto;
+import Struttura.MyPanel;
 
 import javax.swing.*;
 import java.io.File;
@@ -31,6 +31,7 @@ public class Main {
             Conto ogg= new Conto(Dat, Desc, ammo);
             arr.add(ogg);
         }
+
 
         MyPanel panel = new MyPanel(arr);
         f.add(panel);
