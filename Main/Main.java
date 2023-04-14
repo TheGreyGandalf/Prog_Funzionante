@@ -32,7 +32,6 @@ public class Main {
             arr.add(ogg);
         }
 
-
         MyPanel panel = new MyPanel(arr);
         f.add(panel);
         f.pack();

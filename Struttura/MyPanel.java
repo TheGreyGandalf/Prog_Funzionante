@@ -2,7 +2,10 @@ package Struttura;
 
 import Classe_Conto.Conto;                  //classi dei package
 import Scrittura_File.ScritturaFile;
+import Main.Main;
 
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -28,6 +31,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
 
         private ArrayList<Conto> lista;
         private ArrayList<Conto> NuovaL;            //Lista dopo una modifica al periodo
+        private ArrayList<Conto> Aggiustata;        //Lista dopo aggiustamento periodo ricerca
 
         private JTextField txt, txt2, EtiExcel;
 
@@ -86,10 +90,26 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             Anno = new JButton("Ricerca per Anno");
             Periodo=new JButton("Ricerca per Periodo arbitrario");
             panGioBott.add(Giorno, BorderLayout.NORTH);
+
             Giorno.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    perio(periodo_1.getText(), "", 1);     //passo le 2 date e quanti giorni
+                    Aggiustata=perio(periodo_1.getText(), "", 1);     //passo le 2 date e quanti giorni
+                    DefaultTableModel model = new DefaultTableModel();
+                    JTable table = new JTable(model);
+
+                    String Dat, Desc;
+                    int ammo;
+                    for (int i = 0; i < Aggiustata.size(); i++) {
+                        Dat=Aggiustata.get(i).getData();
+                        Desc=Aggiustata.get(i).getDescrizione();
+                        ammo=Aggiustata.get(i).getAmmontare();
+                        model.addRow(new Object[]{Dat, Desc, ammo});
+                    }
+                    JPanel pippo=new JPanel();
+                    pippo.setLayout(new BorderLayout());
+                    pippo.add(table, BorderLayout.PAGE_END);
+                    //this.add(model, BorderLayout.SOUTH);
                 }
             });
             panGioBott.add(Settimana, BorderLayout.WEST);
@@ -237,7 +257,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                                     t.repaint();
                                     //tm.addRow((new Object[]{c1, c2, Integer.parseInt(c3)}));
                                     tm.Cambia();
-
+                                    //String Utente = EtiExcel.getText();   Da usare!
                                     ScritturaFile sc = new ScritturaFile();
                                     sc.ScriviNormale("Struttura/dati.txt", lista, "\n", false);      //scrivo su file le modifiche
                                     //le scrivo su file
@@ -278,11 +298,11 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                  * @param e = Evento in caso si voglia eliminare dalla tabella un record selezionato
                  */
                 @Override
-                public void actionPerformed(ActionEvent e) {        //NON FUNZIONANTE
+                public void actionPerformed(ActionEvent e) {
                     ScritturaFile scr= new ScritturaFile();
                     int i = t.getSelectedRow();
                     lista.remove(i);                        //elimino elemento selezionato
-
+                    //String Utente = EtiExcel.getText();    //da usare
                     scr.ScriviNormale("Struttura/dati.txt", lista, "\n", false);
                     t.repaint();
                     tm.settaValori();
@@ -310,7 +330,6 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     File fif = new File(Utente+".ods");
                     ScritturaFile.fillData OnOpe = new ScritturaFile.fillData(t, fif);
                     OnOpe.OpenDoc(fif, lista);          //scrttura su open document
-                    //OnExc.scriv();   COMMENTATA SCRITTURA SU EXCEL
                 }
             });
             this.add(export, BorderLayout.CENTER);
@@ -320,7 +339,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             export2.setLayout(new BorderLayout());
             export2.setLayout(new BorderLayout());
             export2.add(ButCsv, BorderLayout.CENTER);
-            ButExcel.addActionListener(new ActionListener() {
+            ButCsv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
@@ -337,7 +356,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             export3.setLayout(new BorderLayout());
             export3.add(ButTxt, BorderLayout.CENTER);
             export3.add(Importa, BorderLayout.SOUTH);
-            ButExcel.addActionListener(new ActionListener() {
+            ButTxt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
@@ -348,11 +367,18 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             Importa.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    File fil= new File(EtiExcel.getText());
+                    //File fil= new File(EtiExcel.getText());
+                    String s = EtiExcel.getText();
+                    //ScritturaFile leggi = new ScritturaFile();
+                    tab Modello = new tab();
+                    Modello.importTable(s, lista);
+                    //Modello.settaValori();
+                    //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
 
                 }
             });
             this.add(export3, BorderLayout.SOUTH);
+
 
     }
 
@@ -378,8 +404,8 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         switch(gg){
             case (1):
                 for (Conto c:lista) {
-                    per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
-                    if (c.getData().equals(passato1)) {
+                    String conv= passato1.format(dtf);
+                    if (c.getData().equals(conv)) {
                         Listaperiodo.add(c);
                     }
                 }
@@ -410,10 +436,11 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     }
                 }
             break;
-
+            case(0):                //da fare per punti bonus!
+                break;
+            default:
+                break;
         }
-            //ArrayList<Integer> segnaind= new ArrayList();
-
                 //String formattedDate = myDateObj.format(myFormatObj);
                 /*
                 if (per.isBefore(PeriodoSottratto) || per.isAfter(passato1)) {
@@ -444,7 +471,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             model.addRow(new Object[]{Dat, Desc, ammo});
         }
 
-        JFrame frame = new JFrame();
+        /*JFrame frame = new JFrame();
 
         JTable tabellina = new JTable(model);
         tabellina.setModel(model);
@@ -455,9 +482,9 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         frame.add(tabellina, BorderLayout.CENTER);
         this.add(tabellina, BorderLayout.NORTH);
 
-        tm.settaValori();
-        t.repaint();
-        return Listaperiodo;
+        //tm.settaValori();
+        t.repaint();*/
+        return Listaperiodo;                    //ritorno la lista aggiustata con i dati di interesse
     }
 
     /**
@@ -470,7 +497,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
     /**
      *Ho bisogno di riconvertire quando lo ricerco nell'elenco!!!
      */
-    public void perio(String Primo, String Secondo, int gg){
+    public ArrayList<Conto> perio(String Primo, String Secondo, int gg){
         tm.settaValori();
         t.repaint();
         ArrayList<Conto> Listaperiodo;
@@ -479,33 +506,35 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         now.format(dtf);
         LocalDate passato1 = LocalDate.parse(Primo, dtf);
         //LocalDate passato2 = LocalDate.parse(Secondo, dtf);
+        ArrayList<Conto> rit;
         LocalDate nullo = null;
 
         if (passato1.isAfter(now)) {
             JOptionPane.showMessageDialog(null, "Back to the future?");
-            return;
+            return null;
         }
 
         if(gg!=0)
         {
-            sottrai(gg, passato1, nullo);
+            rit=sottrai(gg, passato1, nullo);
         }
         else
         {
             if ((Secondo.equals("Periodo Fine") || Secondo.isEmpty() || Primo.equals("Periodo Inizio") || (Primo.isEmpty()))) {
                 JOptionPane.showMessageDialog(null, "Inserire secondo Periodo");
-                return;
+                return null;
             }
             LocalDate passato2 = LocalDate.parse(Secondo, dtf);
             if (passato2.isAfter(now)) {
                 JOptionPane.showMessageDialog(null, "Back to the future?");
-                return;
+                return null;
             }
             else
             {
-                sottrai(gg, passato1, passato2);
+                rit=sottrai(gg, passato1, passato2);
             }
         }
+        return rit;
     }
 
     /**

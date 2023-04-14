@@ -8,6 +8,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableModel;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.*;
 
@@ -62,7 +64,28 @@ public class ScritturaFile {
         }
     }
 
-    private void LeggiFile(File f){
+    public ArrayList<Conto> LeggiFile(File f, ArrayList<Conto> a){
+        Scanner scan = null;
+        try {
+            scan = new Scanner((f));
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        //variabili per inserire i valori nell array
+        String Dat, Desc;
+        int ammo;
+
+        while(scan.hasNextLine())
+        {
+            Dat= scan.nextLine();
+            Desc= scan.nextLine();
+            ammo= Integer.parseInt(scan.nextLine());
+            Conto ogg= new Conto(Dat, Desc, ammo);
+            a.add(ogg);
+        }
+        scan.close();
+        return a;
 
     }
 

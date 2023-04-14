@@ -7,12 +7,6 @@ Consegna fornitore
 06/12/2022
 Manuele
 12345
-08/12/2022
-Acquisti cancelleria
-523
-12/12/2022
-Dario
-10
 23/12/2022
 Cancelleria
 533
@@ -31,3 +25,6 @@ Consegna
 27/01/2023
 Consegna
 12365
+14/04/2023
+Ciaooo
+63333

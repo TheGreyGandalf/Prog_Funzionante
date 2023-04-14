@@ -7,6 +7,10 @@ import Scrittura_File.ScritturaFile;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class tab extends DefaultTableModel {
@@ -95,6 +99,37 @@ public class tab extends DefaultTableModel {
             ammo=arrayConto.get(i).getAmmontare();
             tm.addRow(new Object[]{Dat, Desc, ammo});
         }
+    }
+
+    public void RiSetta(ArrayList<Conto> c)
+    {
+        arrayConto=c;
+        settaValori();
+    }
+
+    public void importTable(String s,ArrayList<Conto> c)
+    {
+        c.clear();
+        File f= new File("");
+        String Dat, Desc;
+        int ammo;
+        try{
+            BufferedReader br=new BufferedReader(new FileReader(f.getAbsolutePath()+f.separator+ s));
+            while((Dat=br.readLine())!=null)
+            {
+                Desc=br.readLine();
+                ammo= Integer.parseInt(br.readLine());
+                Conto con=new Conto(Dat,Desc,ammo);
+                c.add(con);
+            }
+            br.close();
+        }
+        catch (IOException e)
+        {
+            JOptionPane.showMessageDialog(null, "File not found", "Errore", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+        }
+        //settaValori();
     }
 
     /**
