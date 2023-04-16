@@ -2,13 +2,11 @@ package Struttura;
 
 import Classe_Conto.Conto;                  //classi dei package
 import Scrittura_File.ScritturaFile;
-import Main.Main;
 
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -364,16 +361,37 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     OnCsv.ScriviNormale(Utente+".txt", lista,"\n", false);
                 }
             });
-            Importa.addActionListener(new ActionListener() {
+
+        /**
+         * Metodo che vien usato epr importare da file, ancora incompleto
+         */
+        Importa.addActionListener(new ActionListener() {
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     //File fil= new File(EtiExcel.getText());
-                    String s = EtiExcel.getText();
+
+                    JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+                    // invoke the showsOpenDialog function to show the save dialog
+                    int r = j.showOpenDialog(null);
+                    String lollo = null;
+
+                    // if the user selects a file
+                    if (r == JFileChooser.APPROVE_OPTION)
+                    {
+                        // set the label to the path of the selected file
+                        lollo=j.getSelectedFile().getAbsolutePath();
+                    }
+                    // if the user cancelled the operation
+
+
                     //ScritturaFile leggi = new ScritturaFile();
-                    tab Modello = new tab();
+                    /*tab Modello = new tab();
                     Modello.importTable(s, lista);
                     //Modello.settaValori();
                     //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
+                     */
 
                 }
             });

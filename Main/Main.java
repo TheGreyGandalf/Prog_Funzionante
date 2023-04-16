@@ -22,7 +22,6 @@ public class Main {
         int ammo;
 
         ArrayList<Conto> arr =new ArrayList<>();
-
         while(scan.hasNextLine())
         {
             Dat= scan.nextLine();
