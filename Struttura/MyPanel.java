@@ -12,11 +12,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Scanner;
+
 
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -363,7 +366,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             });
 
         /**
-         * Metodo che vien usato epr importare da file, ancora incompleto
+         * Metodo che vien usato epr importare da file, ancora incompleto  #######################
          */
         Importa.addActionListener(new ActionListener() {
 
@@ -371,20 +374,19 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                 public void actionPerformed(ActionEvent e) {
                     //File fil= new File(EtiExcel.getText());
 
-                    JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                    JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView());
 
                     // invoke the showsOpenDialog function to show the save dialog
                     int r = j.showOpenDialog(null);
-                    String lollo = null;
+                    String posizione = null;
 
                     // if the user selects a file
                     if (r == JFileChooser.APPROVE_OPTION)
                     {
                         // set the label to the path of the selected file
-                        lollo=j.getSelectedFile().getAbsolutePath();
+                        posizione=j.getSelectedFile().getAbsolutePath();
                     }
                     // if the user cancelled the operation
-
 
                     //ScritturaFile leggi = new ScritturaFile();
                     /*tab Modello = new tab();
@@ -392,6 +394,31 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     //Modello.settaValori();
                     //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
                      */
+                    File fil= new File(posizione);                     //file da cui leggiamo i dati
+                    Scanner scan = null;
+                    try {
+                        scan = new Scanner((fil));
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    //variabili per inserire i valori nell array
+                    String Dat, Desc;
+                    int ammo;
+                    lista.clear();
+                    while(scan.hasNextLine())
+                    {
+                        Dat= scan.nextLine();
+                        Desc= scan.nextLine();
+                        ammo= Integer.parseInt(scan.nextLine());
+                        Conto ogg= new Conto(Dat, Desc, ammo);
+                        lista.add(ogg);
+                    }
+                    tm.Cambia();
+                    t.repaint();
+                    tm.settaValori();
+                    //tm.Cambia();
+                    t.repaint();
 
                 }
             });
