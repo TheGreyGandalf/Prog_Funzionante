@@ -40,12 +40,11 @@ public class MyPanel extends JPanel implements ActionListener {
 
         private JTextField periodo_1, periodo_2;     //campi per inserimento periodo
         private JButton Giorno, Settimana, Mese, Anno, Periodo, Prossimo;  //pulsanti per vari tipi di raggruppamenti
-
+        private JButton Reset;
 
         private JTable t;
         private tab tm;
 
-        private JLabel l;
         public int el=0;
 
     /**
@@ -446,6 +445,17 @@ public class MyPanel extends JPanel implements ActionListener {
                 }
             });
             this.add(export3, BorderLayout.SOUTH);
+
+        Reset = new JButton("Reset tabella");
+        export3.add(Reset, BorderLayout.NORTH);
+        Reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resettatore();
+            }
+        });
+        this.add(export3, BorderLayout.EAST);
+
     }
 
     /**
@@ -693,4 +703,23 @@ public class MyPanel extends JPanel implements ActionListener {
         t.repaint();
     }
 
+    private void resettatore()
+    {
+        String Dat, Desc;
+        int ammo;
+        lista.clear();
+
+        /*for (Conto c:copia) {
+            Dat= c.getData();
+            Desc= c.getDescrizione();
+            ammo= c.getAmmontare();
+            Conto ogg= new Conto(Dat, Desc, ammo);
+            lista.add(ogg);
+        }*/
+        lista=copia;
+        tm.Cambia();
+        t.repaint();
+        tm.settaValori();
+        t.repaint();
+    }
 }
