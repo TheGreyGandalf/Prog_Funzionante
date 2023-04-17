@@ -2,6 +2,7 @@ package Struttura;
 
 import Classe_Conto.Conto;                  //classi dei package
 import Scrittura_File.ScritturaFile;
+import Struttura.CalcolaEntrate;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -24,7 +25,7 @@ import java.util.Scanner;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class MyPanel extends JPanel implements ActionListener, DocumentListener {
+public class MyPanel extends JPanel implements ActionListener {
 
         private JButton b;
         private JButton nuova, elimina, ButExcel, ButCsv, ButTxt, Importa;
@@ -34,6 +35,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
         private ArrayList<Conto> Aggiustata;        //Lista dopo aggiustamento periodo ricerca
 
         private JTextField txt, txt2, EtiExcel;
+        private JTextField CampoNetto;                  //Campo calcolato in cui si inserisce il totale di entrate
 
         private JTextField periodo_1, periodo_2;     //campi per inserimento periodo
         private JButton Giorno, Settimana, Mese, Anno, Periodo, Prossimo;  //pulsanti per vari tipi di raggruppamenti
@@ -70,6 +72,14 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             pTab.add(t.getTableHeader(), BorderLayout.NORTH);
             //pTab.add(new JScrollPane(t));
             this.add(pTab, BorderLayout.NORTH);
+
+            JPanel PannelloCalcolo = new JPanel();
+            PannelloCalcolo.setLayout(new GridLayout());
+            CalcolaEntrate ca = new CalcolaEntrate(lista);
+            CampoNetto = new JTextField("Calcolo");
+            CampoNetto.setText(String.valueOf(ca.calcolatore()));
+            PannelloCalcolo.add(CampoNetto);
+            this.add(CampoNetto, BorderLayout.WEST);
 
             /**
              * Pannello con ricerca per data
@@ -253,6 +263,13 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                                     String c3 = campo3.getText();
                                     Conto ogg= new Conto(c1, c2, Integer.parseInt(c3));
                                     lista.add(ogg);                             //Aggiungo informazioni alla lista
+
+
+                                    CalcolaEntrate ca = new CalcolaEntrate(lista);
+                                    CampoNetto.setText(String.valueOf(ca.calcolatore()));
+                                    CampoNetto.repaint();
+
+
                                     f.dispose();
                                     t.repaint();
                                     //tm.addRow((new Object[]{c1, c2, Integer.parseInt(c3)}));
@@ -304,6 +321,13 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                     lista.remove(i);                        //elimino elemento selezionato
                     //String Utente = EtiExcel.getText();    //da usare
                     scr.ScriviNormale("Struttura/dati.txt", lista, "\n", false);
+
+
+                    CalcolaEntrate ca = new CalcolaEntrate(lista);
+                    CampoNetto.setText(String.valueOf(ca.calcolatore()));
+                    CampoNetto.repaint();
+
+
                     t.repaint();
                     tm.settaValori();
                     //tm.Cambia();
@@ -366,7 +390,7 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             });
 
         /**
-         * Metodo che vien usato epr importare da file, ancora incompleto  #######################
+         * Metodo che vien usato epr importare da file
          */
         Importa.addActionListener(new ActionListener() {
 
@@ -414,6 +438,11 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                         Conto ogg= new Conto(Dat, Desc, ammo);
                         lista.add(ogg);
                     }
+                    /**************************************************/
+                    CalcolaEntrate ca = new CalcolaEntrate(lista);
+                    CampoNetto.setText(String.valueOf(ca.calcolatore()));
+                    CampoNetto.repaint();
+
                     tm.Cambia();
                     t.repaint();
                     tm.settaValori();
@@ -423,8 +452,6 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
                 }
             });
             this.add(export3, BorderLayout.SOUTH);
-
-
     }
 
     /**
@@ -515,6 +542,10 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
             ammo=Listaperiodo.get(i).getAmmontare();
             model.addRow(new Object[]{Dat, Desc, ammo});
         }
+
+        CalcolaEntrate ca = new CalcolaEntrate(Listaperiodo);
+        CampoNetto.setText(String.valueOf(ca.calcolatore()));
+        CampoNetto.repaint();
 
         /*JFrame frame = new JFrame();
 
@@ -646,22 +677,6 @@ public class MyPanel extends JPanel implements ActionListener, DocumentListener 
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-    }
-
-
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-
     }
 
 }
