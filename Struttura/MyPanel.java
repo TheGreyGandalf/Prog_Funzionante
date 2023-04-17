@@ -31,6 +31,7 @@ public class MyPanel extends JPanel implements ActionListener {
         private JButton nuova, elimina, ButExcel, ButCsv, ButTxt, Importa;
 
         private ArrayList<Conto> lista;
+        private ArrayList<Conto> copia;
         private ArrayList<Conto> NuovaL;            //Lista dopo una modifica al periodo
         private ArrayList<Conto> Aggiustata;        //Lista dopo aggiustamento periodo ricerca
 
@@ -78,6 +79,7 @@ public class MyPanel extends JPanel implements ActionListener {
             CalcolaEntrate ca = new CalcolaEntrate(lista);
             CampoNetto = new JTextField("Calcolo");
             CampoNetto.setText(String.valueOf(ca.calcolatore()));
+            CampoNetto.setEditable(false);
             PannelloCalcolo.add(CampoNetto);
             this.add(CampoNetto, BorderLayout.WEST);
 
@@ -86,7 +88,7 @@ public class MyPanel extends JPanel implements ActionListener {
              */
             JPanel panGio = new JPanel();
             panGio.setLayout(new BorderLayout());
-            periodo_1 = new JTextField("Periodo Inizio", 10);
+            periodo_1 = new JTextField("Periodo Ricerca", 10);
             periodo_2 = new JTextField("Periodo Fine", 10);
             panGio.add(periodo_1, BorderLayout.WEST);
             panGio.add(periodo_2, BorderLayout.EAST);
@@ -105,51 +107,42 @@ public class MyPanel extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Aggiustata=perio(periodo_1.getText(), "", 1);     //passo le 2 date e quanti giorni
-                    DefaultTableModel model = new DefaultTableModel();
-                    JTable table = new JTable(model);
-
-                    String Dat, Desc;
-                    int ammo;
-                    for (int i = 0; i < Aggiustata.size(); i++) {
-                        Dat=Aggiustata.get(i).getData();
-                        Desc=Aggiustata.get(i).getDescrizione();
-                        ammo=Aggiustata.get(i).getAmmontare();
-                        model.addRow(new Object[]{Dat, Desc, ammo});
-                    }
-                    JPanel pippo=new JPanel();
-                    pippo.setLayout(new BorderLayout());
-                    pippo.add(table, BorderLayout.PAGE_END);
-                    //this.add(model, BorderLayout.SOUTH);
+                    modificatore();
                 }
             });
             panGioBott.add(Settimana, BorderLayout.WEST);
             Settimana.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    perio(periodo_1.getText(), "", 7);     //passo le 2 date e quanti giorni
+                    Aggiustata=perio(periodo_1.getText(), "", 7);     //passo le 2 date e quanti giorni
+                    modificatore();
                 }
             });
             panGioBott.add(Mese, BorderLayout.CENTER);
             Mese.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    perio(periodo_1.getText(), "", 30);     //passo le 2 date e quanti giorni
+                    Aggiustata=perio(periodo_1.getText(), "", 30);     //passo le 2 date e quanti giorni
+                    modificatore();
                 }
             });
             panGioBott.add(Anno, BorderLayout.EAST);
             Anno.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    perio(periodo_1.getText(), "", 365);     //passo le 2 date e quanti giorni
+                    Aggiustata=perio(periodo_1.getText(), "", 365);     //passo le 2 date e quanti giorni
+                    modificatore();
                 }
             });
             panGioBott.add(Periodo, BorderLayout.SOUTH);
             Periodo.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    perio(periodo_1.getText(), periodo_2.getText(), 0);     //passo le 2 date e quanti giorni
+                    Aggiustata=perio(periodo_1.getText(), periodo_2.getText(), 0);     //passo le 2 date e quanti giorni
+                    modificatore();
                 }
             });
+
             this.add(panGioBott, BorderLayout.EAST);
 
             /**
@@ -390,7 +383,7 @@ public class MyPanel extends JPanel implements ActionListener {
             });
 
         /**
-         * Metodo che vien usato epr importare da file
+         * Metodo che vien usato per importare da file
          */
         Importa.addActionListener(new ActionListener() {
 
@@ -442,6 +435,7 @@ public class MyPanel extends JPanel implements ActionListener {
                     CalcolaEntrate ca = new CalcolaEntrate(lista);
                     CampoNetto.setText(String.valueOf(ca.calcolatore()));
                     CampoNetto.repaint();
+                    /**************************************************/
 
                     tm.Cambia();
                     t.repaint();
@@ -471,6 +465,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
         LocalDate PeriodoSottratto;
         LocalDate per;
+        LocalDate per2;
             //PeriodoSottratto.format(dtf);
 
         switch(gg){
@@ -509,6 +504,13 @@ public class MyPanel extends JPanel implements ActionListener {
                 }
             break;
             case(0):                //da fare per punti bonus!
+                for (Conto c:lista) {
+                    per = LocalDate.parse(c.getData(), dtf); //Periodo inzio
+                    per2 = LocalDate.parse(c.getData(), dtf); //Periodo fine
+                    /*if () {
+                        Listaperiodo.add(c);
+                    }*/
+                }
                 break;
             default:
                 break;
@@ -531,21 +533,12 @@ public class MyPanel extends JPanel implements ActionListener {
                 }
             }
         }*/
-
-        DefaultTableModel model = new DefaultTableModel();
-        String Dat, Desc;
-        int ammo;
-
-        for (int i = 0; i < Listaperiodo.size(); i++) {
-            Dat=Listaperiodo.get(i).getData();
-            Desc=Listaperiodo.get(i).getDescrizione();
-            ammo=Listaperiodo.get(i).getAmmontare();
-            model.addRow(new Object[]{Dat, Desc, ammo});
-        }
+        /*************/
 
         CalcolaEntrate ca = new CalcolaEntrate(Listaperiodo);
         CampoNetto.setText(String.valueOf(ca.calcolatore()));
         CampoNetto.repaint();
+        /************************/
 
         /*JFrame frame = new JFrame();
 
@@ -574,8 +567,8 @@ public class MyPanel extends JPanel implements ActionListener {
      *Ho bisogno di riconvertire quando lo ricerco nell'elenco!!!
      */
     public ArrayList<Conto> perio(String Primo, String Secondo, int gg){
-        tm.settaValori();
-        t.repaint();
+        //tm.settaValori();
+        //t.repaint();
         ArrayList<Conto> Listaperiodo;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate now = LocalDate.now();
@@ -610,6 +603,7 @@ public class MyPanel extends JPanel implements ActionListener {
                 rit=sottrai(gg, passato1, passato2);
             }
         }
+
         return rit;
     }
 
@@ -677,6 +671,26 @@ public class MyPanel extends JPanel implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+    }
+
+    private void modificatore()
+    {
+        copia = lista;       //salvo la lista com'era in una copia
+        String Dat, Desc;
+        int ammo;
+        lista.clear();
+
+        for (Conto c: Aggiustata) {
+            Dat= c.getData();
+            Desc= c.getDescrizione();
+            ammo= c.getAmmontare();
+            Conto ogg= new Conto(Dat, Desc, ammo);
+            lista.add(ogg);
+        }
+        tm.Cambia();
+        t.repaint();
+        tm.settaValori();
+        t.repaint();
     }
 
 }

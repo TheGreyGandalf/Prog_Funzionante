@@ -1,3 +1,7 @@
+//javac -cp ".\jOpenDocument.jar" .\Main\Main.java .\Struttura\CalcolaEntrate.java .\Classe_Conto\Con
+//to.java  .\Struttura\MyPanel.java .\Struttura\tab.java .\Scrittura_File\ScritturaFile.java
+
+
 package Main;
 
 import Classe_Conto.Conto;
