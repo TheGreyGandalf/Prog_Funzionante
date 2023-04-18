@@ -256,11 +256,9 @@ public class MyPanel extends JPanel implements ActionListener {
                                     Conto ogg= new Conto(c1, c2, Integer.parseInt(c3));
                                     lista.add(ogg);                             //Aggiungo informazioni alla lista
 
-
                                     CalcolaEntrate ca = new CalcolaEntrate(lista);
                                     CampoNetto.setText(String.valueOf(ca.calcolatore()));
                                     CampoNetto.repaint();
-
 
                                     f.dispose();
                                     t.repaint();
@@ -550,19 +548,6 @@ public class MyPanel extends JPanel implements ActionListener {
         CampoNetto.repaint();
         /************************/
 
-        /*JFrame frame = new JFrame();
-
-        JTable tabellina = new JTable(model);
-        tabellina.setModel(model);
-        frame.setLayout(null);
-        frame.add(tabellina);
-
-        frame.setLayout(new BorderLayout());
-        frame.add(tabellina, BorderLayout.CENTER);
-        this.add(tabellina, BorderLayout.NORTH);
-
-        //tm.settaValori();
-        t.repaint();*/
         return Listaperiodo;                    //ritorno la lista aggiustata con i dati di interesse
     }
 
@@ -621,7 +606,6 @@ public class MyPanel extends JPanel implements ActionListener {
      * Funzione che preleva testo dal primo campo e va a ricercare corrispondenze
      * È iniziata una nuova ricerca, si azzerano le ricerche precedenti
      */
-
     public int ricerca(int v)
     {
         int i=0;
@@ -651,6 +635,9 @@ public class MyPanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Metodo che viene usato per poter pulire la lista dai valori già cercati
+     */
     private void flush()
     {
         for (int j=0; j<lista.size(); j++)
@@ -689,7 +676,22 @@ public class MyPanel extends JPanel implements ActionListener {
 
     private void modificatore()
     {
-        copia= new ArrayList<>();
+        if (Aggiustata.isEmpty())           //se la ricerca non ha prodotto risultato
+        {
+            /*************/
+            CalcolaEntrate ca = new CalcolaEntrate(Aggiustata);
+            CampoNetto.setText(String.valueOf(ca.calcolatore()));
+            CampoNetto.repaint();
+            /************************/
+
+            tm.Cambia();
+            t.repaint();
+            tm.settaValori();
+            t.repaint();
+            return;
+        }
+
+        copia= new ArrayList<>();                   //istanzio la copia
         String Dat, Desc;
         int ammo;
         for (Conto c:lista) {
@@ -700,10 +702,7 @@ public class MyPanel extends JPanel implements ActionListener {
             copia.add(ogg);
         }
 
-        System.out.println(copia.size()+";"+lista.size());
-
-        lista.clear();
-
+        lista.clear();                      //una volta copiata la pulisco
         for (Conto c: Aggiustata) {
             Dat= c.getData();
             Desc= c.getDescrizione();
@@ -711,6 +710,13 @@ public class MyPanel extends JPanel implements ActionListener {
             Conto ogg= new Conto(Dat, Desc, ammo);
             lista.add(ogg);
         }
+
+        /*************/
+        CalcolaEntrate ca = new CalcolaEntrate(Aggiustata);
+        CampoNetto.setText(String.valueOf(ca.calcolatore()));
+        CampoNetto.repaint();
+        /************************/
+
         tm.Cambia();
         t.repaint();
         tm.settaValori();
@@ -721,7 +727,6 @@ public class MyPanel extends JPanel implements ActionListener {
     {
         String Dat, Desc;
         int ammo;
-        System.out.println(copia.size()+";"+lista.size());
         lista.clear();
 
         for (Conto c:copia) {
@@ -731,6 +736,15 @@ public class MyPanel extends JPanel implements ActionListener {
             Conto ogg= new Conto(Dat, Desc, ammo);
             lista.add(ogg);
         }
+        copia.clear();                      //pulisco la copia
+
+        //Aggiorno il campo calcolato
+        /*************/
+        CalcolaEntrate ca = new CalcolaEntrate(lista);
+        CampoNetto.setText(String.valueOf(ca.calcolatore()));
+        CampoNetto.repaint();
+        /************************/
+
         //lista=copia;
         tm.Cambia();
         t.repaint();
