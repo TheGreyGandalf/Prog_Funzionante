@@ -31,7 +31,7 @@ public class MyPanel extends JPanel implements ActionListener {
         private JButton nuova, elimina, ButExcel, ButCsv, ButTxt, Importa;
 
         private ArrayList<Conto> lista;
-        private ArrayList<Conto> copia;
+        private ArrayList<Conto> copia;             //Lista copia dopo la selezione di un periodo
         private ArrayList<Conto> NuovaL;            //Lista dopo una modifica al periodo
         private ArrayList<Conto> Aggiustata;        //Lista dopo aggiustamento periodo ricerca
 
@@ -632,7 +632,7 @@ public class MyPanel extends JPanel implements ActionListener {
         //int k2= Integer.parseInt(key);
         for (i=0; i< lista.size(); i++)
         {
-            if (lista.get(i).getDescrizione().contains(key) || lista.get(i).getData().contains(key) )
+            if ((lista.get(i).getDescrizione().toLowerCase()).contains(key.toLowerCase()) || lista.get(i).getData().contains(key) )
             {
                 this.txt2.setText("Trovato " + lista.get(i).getDescrizione() + " " + lista.get(i).getData());
                 t.changeSelection(i, 3, false , false);
@@ -660,10 +660,14 @@ public class MyPanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Metodo per la ricerca di un match successivo nella lista
+     */
+
     private void RicercaSuccessivo(){
         String key = this.txt.getText();
         for (int i = 0; i < NuovaL.size(); i++) {
-            if ((NuovaL.get(i).getDescrizione().contains(key) || NuovaL.get(i).getData().contains(key))
+            if (((NuovaL.get(i).getDescrizione().toLowerCase()).contains(key.toLowerCase()) || NuovaL.get(i).getData().contains(key))
                     && NuovaL.get(i).getCercato()!=true )
             {
                 this.txt2.setText("Trovato " + NuovaL.get(i).getDescrizione() + " " + NuovaL.get(i).getData());
@@ -685,9 +689,19 @@ public class MyPanel extends JPanel implements ActionListener {
 
     private void modificatore()
     {
-        copia = lista;       //salvo la lista com'era in una copia
+        copia= new ArrayList<>();
         String Dat, Desc;
         int ammo;
+        for (Conto c:lista) {
+            Dat= c.getData();
+            Desc= c.getDescrizione();
+            ammo= c.getAmmontare();
+            Conto ogg= new Conto(Dat, Desc, ammo);
+            copia.add(ogg);
+        }
+
+        System.out.println(copia.size()+";"+lista.size());
+
         lista.clear();
 
         for (Conto c: Aggiustata) {
@@ -707,16 +721,17 @@ public class MyPanel extends JPanel implements ActionListener {
     {
         String Dat, Desc;
         int ammo;
+        System.out.println(copia.size()+";"+lista.size());
         lista.clear();
 
-        /*for (Conto c:copia) {
+        for (Conto c:copia) {
             Dat= c.getData();
             Desc= c.getDescrizione();
             ammo= c.getAmmontare();
             Conto ogg= new Conto(Dat, Desc, ammo);
             lista.add(ogg);
-        }*/
-        lista=copia;
+        }
+        //lista=copia;
         tm.Cambia();
         t.repaint();
         tm.settaValori();
