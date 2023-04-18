@@ -468,9 +468,6 @@ public class MyPanel extends JPanel implements ActionListener {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ArrayList<Conto> Listaperiodo=new ArrayList<Conto>();              //Lista che conterrà il periodo effettivo interessato
 
-        //LocalDate PeriodoSottratto;
-        /*if(passato2==null) {*/
-
         LocalDate PeriodoSottratto;
         LocalDate per;
         LocalDate per2;
@@ -489,7 +486,7 @@ public class MyPanel extends JPanel implements ActionListener {
                 PeriodoSottratto = passato1.minus(Period.ofDays(7));
                 for (Conto c:lista) {
                     per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
-                    if (Period.between(per,PeriodoSottratto).getDays() <= 0) {
+                    if (ControlloDate(PeriodoSottratto,per, 7)) {
                         Listaperiodo.add(c);
                     }
                 }
@@ -498,15 +495,16 @@ public class MyPanel extends JPanel implements ActionListener {
                 PeriodoSottratto = passato1.minus(Period.ofDays(30));
                 for (Conto c:lista) {
                     per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
-                    if (Period.between(per,PeriodoSottratto).getDays() <= 0) {
+                    if (ControlloDate(PeriodoSottratto,per, 30)) {
                         Listaperiodo.add(c);
+                        //System.out.println(c.getData()+";"+c.getDescrizione());
                     }
                 }
             case(365):
                 PeriodoSottratto = passato1.minus(Period.ofDays(365));
                 for (Conto c:lista) {
                     per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
-                    if (Period.between(per,PeriodoSottratto).getDays() <= 0) {
+                    if (ControlloDate(PeriodoSottratto,per,365)) {
                         Listaperiodo.add(c);
                     }
                 }
@@ -676,20 +674,6 @@ public class MyPanel extends JPanel implements ActionListener {
 
     private void modificatore()
     {
-        if (Aggiustata.isEmpty())           //se la ricerca non ha prodotto risultato
-        {
-            /*************/
-            CalcolaEntrate ca = new CalcolaEntrate(Aggiustata);
-            CampoNetto.setText(String.valueOf(ca.calcolatore()));
-            CampoNetto.repaint();
-            /************************/
-
-            tm.Cambia();
-            t.repaint();
-            tm.settaValori();
-            t.repaint();
-            return;
-        }
 
         copia= new ArrayList<>();                   //istanzio la copia
         String Dat, Desc;
@@ -702,7 +686,24 @@ public class MyPanel extends JPanel implements ActionListener {
             copia.add(ogg);
         }
 
-        lista.clear();                      //una volta copiata la pulisco
+        lista.clear();
+
+        if (Aggiustata.isEmpty())           //se la ricerca non ha prodotto risultato
+        {
+            /*************/
+            CalcolaEntrate ca = new CalcolaEntrate(Aggiustata);
+            CampoNetto.setText(String.valueOf(ca.calcolatore()));
+            CampoNetto.repaint();
+            /************************/
+
+            //tm.Cambia();
+            t.repaint();
+            tm.settaValori();
+            t.repaint();
+            return;
+        }
+
+                             //una volta copiata la pulisco
         for (Conto c: Aggiustata) {
             Dat= c.getData();
             Desc= c.getDescrizione();
@@ -728,6 +729,7 @@ public class MyPanel extends JPanel implements ActionListener {
         String Dat, Desc;
         int ammo;
         lista.clear();
+        Aggiustata.clear();
 
         for (Conto c:copia) {
             Dat= c.getData();
@@ -750,5 +752,42 @@ public class MyPanel extends JPanel implements ActionListener {
         t.repaint();
         tm.settaValori();
         t.repaint();
+    }
+
+    private boolean ControlloDate(LocalDate d1, LocalDate d2, int n)
+    {
+        boolean r=false;
+        /**
+         * Si controlla giorni, mesi ed anni, gli ultimi due devono essere uguali a zero
+         */
+        System.out.println(d1);
+        System.out.println(Period.between(d1,d2).getDays());
+        System.out.println(Period.between(d1,d2).getMonths());
+        System.out.println(Period.between(d1,d2).getYears());
+        System.out.println();
+
+        switch (n) {
+            case 7 -> {
+                if (Period.between(d1, d2).getDays() <= 7 &&
+                        Period.between(d1, d2).getDays() >= 0 &&
+                        Period.between(d1, d2).getMonths() == 0 &&
+                        Period.between(d1, d2).getYears() == 0 ){
+                    r = true;
+                }
+            }
+            case 30 -> {
+                if (Period.between(d1, d2).getMonths() == 0 &&
+                        Period.between(d1, d2).getYears() == 0) {
+                    r = true;
+                }
+            }
+            case 365 -> {
+                if (Period.between(d1, d2).getYears() == 0) {
+                    r = true;
+                }
+            }
+        }
+
+        return r;
     }
 }
