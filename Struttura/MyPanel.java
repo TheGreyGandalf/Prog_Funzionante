@@ -27,24 +27,38 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class MyPanel extends JPanel implements ActionListener {
 
-        private JButton b;
-        private JButton nuova, elimina, ButExcel, ButCsv, ButTxt, Importa;
+        private final JButton b;
+        private final JButton nuova;
+    private final JButton elimina;
+    private final JButton ButExcel;
+    private final JButton ButCsv;
+    private final JButton ButTxt;
+    private final JButton Importa;
 
-        private ArrayList<Conto> lista;
+        private final ArrayList<Conto> lista;
         private ArrayList<Conto> copia;             //Lista copia dopo la selezione di un periodo
         private ArrayList<Conto> NuovaL;            //Lista dopo una modifica al periodo
         private ArrayList<Conto> Aggiustata;        //Lista dopo aggiustamento periodo ricerca
 
-        private JTextField txt, txt2, EtiExcel;
-        private JTextField CampoNetto;                  //Campo calcolato in cui si inserisce il totale di entrate
+        private final JTextField txt;
+    private final JTextField txt2;
+    private final JTextField EtiExcel;
+        private final JTextField CampoNetto;                  //Campo calcolato in cui si inserisce il totale di entrate
 
-        private JTextField periodo_1, periodo_2;     //campi per inserimento periodo
-        private JButton Giorno, Settimana, Mese, Anno, Periodo, Prossimo;  //pulsanti per vari tipi di raggruppamenti
-        private JButton Reset;
+        private final JTextField periodo_1;
+    private final JTextField periodo_2;     //campi per inserimento periodo
+        private final JButton Giorno;
+    private final JButton Settimana;
+    private final JButton Mese;
+    private final JButton Anno;
+    private final JButton Periodo;
+    private final JButton Prossimo;  //pulsanti per vari tipi di raggruppamenti
+        private final JButton Reset;
 
-        private JTable t;
-        private tab tm;
+        private final JTable t;
+        private final tab tm;
 
+        private int flag=0;
         public int el=0;
 
     /**
@@ -196,10 +210,14 @@ public class MyPanel extends JPanel implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
                     class MyPanel2 extends JPanel{
                         private ArrayList<Conto> listaPassata;               //Lista che andremo ad utilizzare
-                        private JButton Aggiungi;                   //bottone per aggiunta di valori a tabella
+                        private final JButton Aggiungi;                   //bottone per aggiunta di valori a tabella
 
-                        private JTextField campo1, campo2, campo3;
-                        private JLabel et1, et2, et3;
+                        private final JTextField campo1;
+                        private final JTextField campo2;
+                        private final JTextField campo3;
+                        private final JLabel et1;
+                        private final JLabel et2;
+                        private final JLabel et3;
 
                         /**
                          *
@@ -637,7 +655,7 @@ public class MyPanel extends JPanel implements ActionListener {
         String key = this.txt.getText();
         for (int i = 0; i < NuovaL.size(); i++) {
             if (((NuovaL.get(i).getDescrizione().toLowerCase()).contains(key.toLowerCase()) || NuovaL.get(i).getData().contains(key))
-                    && NuovaL.get(i).getCercato()!=true )
+                    && !NuovaL.get(i).getCercato())
             {
                 this.txt2.setText("Trovato " + NuovaL.get(i).getDescrizione() + " " + NuovaL.get(i).getData());
                 t.changeSelection(i, 3, false , false);
@@ -671,6 +689,8 @@ public class MyPanel extends JPanel implements ActionListener {
         }
 
         lista.clear();
+
+        flag=1;
 
         if (Aggiustata.isEmpty())           //se la ricerca non ha prodotto risultato
         {
@@ -706,10 +726,19 @@ public class MyPanel extends JPanel implements ActionListener {
         t.repaint();
         tm.settaValori();
         t.repaint();
+
+
     }
 
     private void resettatore()
     {
+        if (flag==0 || copia.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Nulla Da Resettare!");
+            return;
+        }
+
+
         String Dat, Desc;
         int ammo;
         lista.clear();
@@ -745,7 +774,7 @@ public class MyPanel extends JPanel implements ActionListener {
         switch (n) {
             case (7) -> {
                 if (Period.between(d1, d2).getDays() <= 7 &&
-                        Period.between(d1, d2).getDays() >= 0 &&
+                        Period.between(d1, d2).getDays() > 0 &&
                         Period.between(d1, d2).getMonths() == 0 &&
                         Period.between(d1, d2).getYears() == 0) {
                     r = true;
@@ -753,7 +782,8 @@ public class MyPanel extends JPanel implements ActionListener {
             }
             case (30) -> {
 
-                if (Period.between(d1, d2).getMonths() == 0 &&
+                if (Period.between(d1, d2).getDays() >= 0 &&
+                        Period.between(d1, d2).getMonths() == 0 &&
                         Period.between(d1, d2).getYears() == 0) {
                     /*System.out.println("Quello passato ha:");
                     System.out.println(d1);
@@ -765,7 +795,9 @@ public class MyPanel extends JPanel implements ActionListener {
                 }
             }
             case (365) -> {
-                if (Period.between(d1, d2).getYears() == 0) {
+                if (Period.between(d1, d2).getDays() >= 0 &&
+                        Period.between(d1, d2).getMonths() >= 0 &&
+                        Period.between(d1, d2).getYears() == 0) {
                     r = true;
                 }
             }
