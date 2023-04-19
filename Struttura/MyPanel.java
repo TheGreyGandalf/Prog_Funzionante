@@ -473,73 +473,57 @@ public class MyPanel extends JPanel implements ActionListener {
         LocalDate per2;
             //PeriodoSottratto.format(dtf);
 
-        switch(gg){
-            case (1):
-                for (Conto c:lista) {
-                    String conv= passato1.format(dtf);
+        switch (gg) {
+            case (1) -> {
+                for (Conto c : lista) {
+                    String conv = passato1.format(dtf);
                     if (c.getData().equals(conv)) {
                         Listaperiodo.add(c);
                     }
                 }
-                break;
-            case (7):
+            }
+            case (7) -> {
                 PeriodoSottratto = passato1.minus(Period.ofDays(7));
-                for (Conto c:lista) {
+                for (Conto c : lista) {
                     per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
-                    if (ControlloDate(PeriodoSottratto,per, 7)) {
+                    if (ControlloDate(PeriodoSottratto, per, 7)) {
                         Listaperiodo.add(c);
                     }
                 }
-                break;
-            case(30):
+            }
+            case (30) -> {
                 PeriodoSottratto = passato1.minus(Period.ofDays(30));
-                for (Conto c:lista) {
+                for (Conto c : lista) {
                     per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
-                    if (ControlloDate(PeriodoSottratto,per, 30)) {
+                    if (ControlloDate(PeriodoSottratto, per, 30)) {
+                        System.out.println(c.getData() + ";" + c.getDescrizione());
                         Listaperiodo.add(c);
-                        //System.out.println(c.getData()+";"+c.getDescrizione());
                     }
                 }
-            case(365):
+            }
+            case (365) -> {
                 PeriodoSottratto = passato1.minus(Period.ofDays(365));
-                for (Conto c:lista) {
+                for (Conto c : lista) {
                     per = LocalDate.parse(c.getData(), dtf); //traduzione a tipo periodo
-                    if (ControlloDate(PeriodoSottratto,per,365)) {
+                    if (ControlloDate(PeriodoSottratto, per, 365)) {
                         Listaperiodo.add(c);
                     }
                 }
-            break;
-            case(0):                //da fare per punti bonus!
-                for (Conto c:lista) {
+            }
+            case (0) -> {                //da fare per punti bonus!
+                for (Conto c : lista) {
                     per = LocalDate.parse(c.getData(), dtf); //Periodo inzio
                     per2 = LocalDate.parse(c.getData(), dtf); //Periodo fine
                     /*if () {
                         Listaperiodo.add(c);
                     }*/
                 }
-                break;
-            default:
-                break;
-        }
-                //String formattedDate = myDateObj.format(myFormatObj);
-                /*
-                if (per.isBefore(PeriodoSottratto) || per.isAfter(passato1)) {
-                    System.out.println(i);
-                    Listaperiodo.remove(i);
-                    //Listaperiodo.remove(i);
-                    }
-                 */
-        /*}             //Periodo2 Al momento non interessa
-        else
-        {
-            for (int i = 0; i < Listaperiodo.size(); i++) {
-                LocalDate pippo = LocalDate.parse(Listaperiodo.get(i).Data, dtf);
-                if (pippo.isBefore(passato1) || pippo.isAfter(passato2)) {
-                    Listaperiodo.remove(i);
-                }
             }
-        }*/
-        /*************/
+            default -> {
+            }
+        }
+
+        /************************/
 
         CalcolaEntrate ca = new CalcolaEntrate(Listaperiodo);
         CampoNetto.setText(String.valueOf(ca.calcolatore()));
@@ -757,37 +741,35 @@ public class MyPanel extends JPanel implements ActionListener {
     private boolean ControlloDate(LocalDate d1, LocalDate d2, int n)
     {
         boolean r=false;
-        /**
-         * Si controlla giorni, mesi ed anni, gli ultimi due devono essere uguali a zero
-         */
-        System.out.println(d1);
-        System.out.println(Period.between(d1,d2).getDays());
-        System.out.println(Period.between(d1,d2).getMonths());
-        System.out.println(Period.between(d1,d2).getYears());
-        System.out.println();
 
         switch (n) {
-            case 7 -> {
+            case (7) -> {
                 if (Period.between(d1, d2).getDays() <= 7 &&
                         Period.between(d1, d2).getDays() >= 0 &&
                         Period.between(d1, d2).getMonths() == 0 &&
-                        Period.between(d1, d2).getYears() == 0 ){
-                    r = true;
-                }
-            }
-            case 30 -> {
-                if (Period.between(d1, d2).getMonths() == 0 &&
                         Period.between(d1, d2).getYears() == 0) {
                     r = true;
                 }
             }
-            case 365 -> {
+            case (30) -> {
+
+                if (Period.between(d1, d2).getMonths() == 0 &&
+                        Period.between(d1, d2).getYears() == 0) {
+                    /*System.out.println("Quello passato ha:");
+                    System.out.println(d1);
+                    System.out.println(d2);
+                    System.out.println(Period.between(d1,d2).getDays());
+                    System.out.println(Period.between(d1,d2).getMonths());
+                    System.out.println(Period.between(d1,d2).getYears());*/
+                    r = true;
+                }
+            }
+            case (365) -> {
                 if (Period.between(d1, d2).getYears() == 0) {
                     r = true;
                 }
             }
         }
-
         return r;
     }
 }
