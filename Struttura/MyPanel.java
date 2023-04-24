@@ -19,57 +19,51 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;  //Per capire se le date sono valide
+import java.text.ParseException;    //Per errori di conversione
 
+import static javax.swing.JOptionPane.*;
 
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
+/**
+ * Classe principale che governa gran parte dell'applicazione,
+ * Implementa Action Listener
+ */
+
 public class MyPanel extends JPanel implements ActionListener {
 
-        private final JButton b;
-        private final JButton nuova;
-    private final JButton elimina;
-    private final JButton ButExcel;
-    private final JButton ButCsv;
-    private final JButton ButTxt;
-    private final JButton Importa;
+        private final JButton b,nuova,elimina,ButExcel,ButCsv,ButTxt,Importa;
 
-        private final ArrayList<Conto> lista;
-        private ArrayList<Conto> copia;             //Lista copia dopo la selezione di un periodo
-        private ArrayList<Conto> NuovaL;            //Lista dopo una modifica al periodo
-        private ArrayList<Conto> Aggiustata;        //Lista dopo aggiustamento periodo ricerca
+        private ArrayList<Conto> lista, copia, NuovaL, Aggiustata;
+        //Lista copia dopo la selezione di un periodo
+        //Lista dopo una modifica al periodo
+        //Lista dopo aggiustamento periodo ricerca
 
-        private final JTextField txt;
-    private final JTextField txt2;
-    private final JTextField EtiExcel;
-        private final JTextField CampoNetto;                  //Campo calcolato in cui si inserisce il totale di entrate
+        private final JTextField txt,txt2,EtiExcel,CampoNetto;  //Campo calcolato in cui si inserisce il totale di entrate
 
-        private final JTextField periodo_1;
-    private final JTextField periodo_2;     //campi per inserimento periodo
-        private final JButton Giorno;
-    private final JButton Settimana;
-    private final JButton Mese;
-    private final JButton Anno;
-    private final JButton Periodo;
-    private final JButton Prossimo;  //pulsanti per vari tipi di raggruppamenti
-        private final JButton Reset;
+        private final JTextField periodo_1,periodo_2;     //campi per inserimento periodo
+        private final JButton Giorno, Settimana, Mese, Anno, Periodo, Prossimo, Reset;
+        //pulsanti per vari tipi di raggruppamenti
 
         private final JTable t;
         private final tab tm;
 
         private int flag=0;
-        public int el=0;
+        private int el=-1;               //Elemento che contiene il primo match
+        private File Nome_File;
 
     /**
      *
      * @param listaConto= La lista che contiene i dati che si andranno a leggere da stream di File
+     * Gestisce tutti i bottoni e i metodi collegati ad essi
      */
-    public MyPanel(ArrayList<Conto> listaConto) {
+
+    public MyPanel(ArrayList<Conto> listaConto, File file) {
+            Nome_File=file;
             lista=listaConto;
 
-
-            //TableModel dataModel = new Struttura.tab(lista);
             // crea la tabella
             tm = new tab(lista);
             //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
@@ -78,34 +72,34 @@ public class MyPanel extends JPanel implements ActionListener {
             //t.add(new JScrollPane());
             tm.settaValori();               //metodo per assegnare glo oggetti alla tabella
 
+            this.setLayout(new BorderLayout());
+
+            //PRIMO pannello
             JPanel pTab = new JPanel();                 //pannello con tabella e header
-            pTab.setLayout(new BorderLayout());
-            //pTab.setLayout(new BorderLayout());
+        pTab.setLayout(new BorderLayout());         //pTab ha il primo layout
 
-            pTab.add(t, BorderLayout.CENTER);
-            pTab.add(t.getTableHeader(), BorderLayout.NORTH);
-            //pTab.add(new JScrollPane(t));
-            this.add(pTab, BorderLayout.NORTH);
-
-            JPanel PannelloCalcolo = new JPanel();
-            PannelloCalcolo.setLayout(new GridLayout());
+            pTab.add(t.getTableHeader(), BorderLayout.NORTH);       //Header tabella a NORD
+            pTab.add(t, BorderLayout.CENTER);                       //Tabella a CENTER
+                        //PannelloCalcolo.setLayout(new GridLayout());
             CalcolaEntrate ca = new CalcolaEntrate(lista);
             CampoNetto = new JTextField("Calcolo");
             CampoNetto.setText(String.valueOf(ca.calcolatore()));
             CampoNetto.setEditable(false);
-            PannelloCalcolo.add(CampoNetto);
-            this.add(CampoNetto, BorderLayout.WEST);
+            pTab.add(CampoNetto, BorderLayout.SOUTH);
+            this.add(pTab, BorderLayout.NORTH);                 //Il tutto a NORD
+
+
+            //SECONDO pannello
+            JPanel PanDate = new JPanel();      //pannello con campi per ricerca periodo
 
             /**
              * Pannello con ricerca per data
              */
-            JPanel panGio = new JPanel();
-            panGio.setLayout(new BorderLayout());
+            PanDate.setLayout(new BorderLayout());
             periodo_1 = new JTextField("Periodo Ricerca", 10);
             periodo_2 = new JTextField("Periodo Fine", 10);
-            panGio.add(periodo_1, BorderLayout.WEST);
-            panGio.add(periodo_2, BorderLayout.EAST);
-            this.add(panGio, BorderLayout.CENTER);
+            PanDate.add(periodo_1, BorderLayout.WEST);
+            PanDate.add(periodo_2, BorderLayout.CENTER);
 
             JPanel panGioBott = new JPanel();
             panGioBott.setLayout(new BorderLayout());
@@ -114,8 +108,8 @@ public class MyPanel extends JPanel implements ActionListener {
             Mese= new JButton("Ricerca per Mese");
             Anno = new JButton("Ricerca per Anno");
             Periodo=new JButton("Ricerca per Periodo arbitrario");
-            panGioBott.add(Giorno, BorderLayout.NORTH);
 
+            PanDate.add(Giorno, BorderLayout.NORTH);
             Giorno.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -155,31 +149,28 @@ public class MyPanel extends JPanel implements ActionListener {
                     modificatore();
                 }
             });
+            
+            PanDate.add(panGioBott,BorderLayout.EAST);
 
-            this.add(panGioBott, BorderLayout.EAST);
+            this.add(PanDate, BorderLayout.EAST);               //Il tutto aggiunto ad EST
 
             /**
             * Pannello con Ricerca per carattere
             */
 
+            //TERZO pannello
             JPanel pTab2 = new JPanel();                //secondo pannello con altri bottoni
             pTab2.setLayout(new BorderLayout());
+
             txt = new JTextField("", 25);
             pTab2.add(txt, BorderLayout.CENTER);
-            this.add(txt, BorderLayout.CENTER);
 
-            txt2 = new JTextField("", 25);
+            txt2 = new JTextField("", 25);                  //Campo risultato ricerca
             txt2.setEditable(false);
-            pTab2.add(txt2, BorderLayout.CENTER);
-            this.add(txt2, BorderLayout.CENTER);
-
-            //secondo pannello NORD:Cerca un utente, CENTRO:Prossimo, EST:Nuova, SUD:Elimina,
-            JPanel p = new JPanel();
-            p.setLayout(new BorderLayout());
+            pTab2.add(txt2, BorderLayout.EAST);
+            
             b= new JButton("Cerca Un Utente");
             Prossimo= new JButton("Prossimo Match");
-            p.add(b, BorderLayout.NORTH);
-            p.add(Prossimo, BorderLayout.CENTER);
             b.addActionListener(new ActionListener(){                   //Bottone che fa partire la ricerca da una stringa
                 /**
                  * @param e Evento in caso si cercasse un campo all'interno dei campi salvati
@@ -192,19 +183,26 @@ public class MyPanel extends JPanel implements ActionListener {
             Prossimo.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    RicercaSuccessivo();
+                    RicercaSuccessivo(el);
                 }
             });
+
+            pTab2.add(b, BorderLayout.NORTH);
+            pTab2.add(Prossimo, BorderLayout.WEST);
             //this.add(p, BorderLayout.CENTER);
+            this.add(pTab2,BorderLayout.CENTER);                          //Ricerche aggiunte in CENTER
 
             //pulsante di aggiunta di un nuovo record
 
+            //TERZO pannello
+            JPanel pTab3 = new JPanel();                //secondo pannello con altri bottoni
+            pTab3.setLayout(new BorderLayout());
+
             nuova= new JButton("Nuova riga");
-            p.add(nuova, BorderLayout.EAST);
             nuova.addActionListener(new ActionListener() {
                 /**
                  *
-                 * @param e, Pannello che compare quando l'utente clicca nuovo Utente
+                 * @param e, Pannello che compare quando l'utente clicca nuovo Utente, NON toccare!!
                  */
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -212,32 +210,17 @@ public class MyPanel extends JPanel implements ActionListener {
                         private ArrayList<Conto> listaPassata;               //Lista che andremo ad utilizzare
                         private final JButton Aggiungi;                   //bottone per aggiunta di valori a tabella
 
-                        private final JTextField campo1;
-                        private final JTextField campo2;
-                        private final JTextField campo3;
-                        private final JLabel et1;
-                        private final JLabel et2;
-                        private final JLabel et3;
-
+                        private final JTextField campo1, campo2, campo3;
+                        private final JLabel et1, et2, et3;
                         /**
                          *
                          * Pannello con 3 etichette per l'aggiunta di nuovi dati
                          */
 
-                        public MyPanel2(/*ArrayList<Classe_Conto.Conto> Lista*/JFrame f) {
+                        public MyPanel2(JFrame f) {
                             //listaPassata=Lista;
                             JPanel pannelloInterno = new JPanel();
                             pannelloInterno.setLayout(new BorderLayout());
-                            /*                                          !!!Commentata poichè è bella ma difficile da implementare!!!
-                            Struttura.tab tm = new Struttura.tab(listaPassata);                     //NON FUNZIONANTE
-                            JTable t = new JTable(tm);//tabella che si apre in caso si voglia aggiungere
-
-                            pannelloInterno.setLayout(new BorderLayout());//Pannello con tabella vuota e bottone
-                            //pTab.setLayout(new BorderLayout());
-                            pannelloInterno.add(t, BorderLayout.CENTER);
-                            pannelloInterno.add(t.getTableHeader(), BorderLayout.NORTH);
-                            this.add(pannelloInterno, BorderLayout.NORTH);
-                             */
 
                             JPanel PanBottoni = new JPanel();
                             JPanel PanEtic = new JPanel();
@@ -271,6 +254,15 @@ public class MyPanel extends JPanel implements ActionListener {
                                     String c1 = campo1.getText();
                                     String c2 = campo2.getText();
                                     String c3 = campo3.getText();
+                                    /**
+                                     *  Controllo se la data inserita è una data valida
+                                     */
+                                    if(!isValidDate(c1)){
+                                      showMessageDialog(null, "Data non valida", "Errore", ERROR_MESSAGE);
+                                      f.dispose();
+                                      t.repaint();
+                                    }
+                                    else{
                                     Conto ogg= new Conto(c1, c2, Integer.parseInt(c3));
                                     lista.add(ogg);                             //Aggiungo informazioni alla lista
 
@@ -284,10 +276,11 @@ public class MyPanel extends JPanel implements ActionListener {
                                     tm.Cambia();
                                     //String Utente = EtiExcel.getText();   Da usare!
                                     ScritturaFile sc = new ScritturaFile();
-                                    sc.ScriviNormale("Struttura/dati.txt", lista, "\n", false);      //scrivo su file le modifiche
+                                    sc.ScriviNormale(Nome_File.toString(), lista, "\n", false);      //scrivo su file le modifiche
                                     //le scrivo su file
                                     tm.settaValori();
                                     t.repaint();
+                                    }
 
                                     //t.invalidate();
                                 }
@@ -312,11 +305,10 @@ public class MyPanel extends JPanel implements ActionListener {
 
                 }
             });
-            this.add(nuova, BorderLayout.EAST);
+            pTab3.add(nuova, BorderLayout.EAST);
 
 
             elimina= new JButton("Elimina riga");
-            p.add(elimina, BorderLayout.SOUTH);
             elimina.addActionListener(new ActionListener() {
                 /**
                  *
@@ -328,7 +320,7 @@ public class MyPanel extends JPanel implements ActionListener {
                     int i = t.getSelectedRow();
                     lista.remove(i);                        //elimino elemento selezionato
                     //String Utente = EtiExcel.getText();    //da usare
-                    scr.ScriviNormale("Struttura/dati.txt", lista, "\n", false);
+                    scr.ScriviNormale(Nome_File.toString(), lista, "\n", false);
 
 
                     CalcolaEntrate ca = new CalcolaEntrate(lista);
@@ -343,16 +335,27 @@ public class MyPanel extends JPanel implements ActionListener {
                     //t.invalidate();
                 }
             });
-        this.add(p, BorderLayout.WEST);
+            pTab3.add(elimina, BorderLayout.SOUTH);
+
+            Reset = new JButton("Reset tabella");
+            pTab3.add(Reset, BorderLayout.NORTH);
+            Reset.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    resettatore();
+                }
+            });
+
+            this.add(pTab3, BorderLayout.WEST);                                             //IL tutto aggiunto a WEST
 
         /**
-         * Pannello Esportazioni, Terzo pannello
+         * Pannello Esportazioni
          */
-
+            //QUARTO Pannello
             JPanel export = new JPanel();
             ButExcel = new JButton("Esporta in formato OpenDocument");
             export.setLayout(new BorderLayout());
-            export.add(ButExcel, BorderLayout.SOUTH);
+            export.add(ButExcel, BorderLayout.NORTH);
             EtiExcel = new JTextField("Nome File Export/Import", 10);
             export.add(EtiExcel, BorderLayout.CENTER);
             ButExcel.addActionListener(new ActionListener() {
@@ -364,13 +367,9 @@ public class MyPanel extends JPanel implements ActionListener {
                     OnOpe.OpenDoc(fif, lista);          //scrttura su open document
                 }
             });
-            this.add(export, BorderLayout.CENTER);
-
-            JPanel export2 = new JPanel();
+            
             ButCsv = new JButton("Esporta in formato CSV");
-            export2.setLayout(new BorderLayout());
-            export2.setLayout(new BorderLayout());
-            export2.add(ButCsv, BorderLayout.CENTER);
+            export.add(ButCsv, BorderLayout.EAST);
             ButCsv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -379,15 +378,10 @@ public class MyPanel extends JPanel implements ActionListener {
                     OnCsv.ScriviNormale(Utente+".csv", lista,",", false);
                 }
             });
-            this.add(export2, BorderLayout.CENTER);
 
-
-            JPanel export3 = new JPanel();
             ButTxt = new JButton("Esporta in formato Txt");
             Importa = new JButton("Importa da File");
-            export3.setLayout(new BorderLayout());
-            export3.add(ButTxt, BorderLayout.CENTER);
-            export3.add(Importa, BorderLayout.SOUTH);
+ 
             ButTxt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -397,10 +391,7 @@ public class MyPanel extends JPanel implements ActionListener {
                 }
             });
 
-        /**
-         * Metodo che vien usato per importare da file
-         */
-        Importa.addActionListener(new ActionListener() {
+            Importa.addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -420,14 +411,9 @@ public class MyPanel extends JPanel implements ActionListener {
                     }
                     // if the user cancelled the operation
 
-                    //ScritturaFile leggi = new ScritturaFile();
-                    /*tab Modello = new tab();
-                    Modello.importTable(s, lista);
-                    //Modello.settaValori();
-                    //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
-                     */
                     File fil= new File(posizione);                     //file da cui leggiamo i dati
                     Scanner scan = null;
+                    Nome_File=fil;                                          //////////////!!!!!!!!!!!!!!!
                     try {
                         scan = new Scanner((fil));
                     } catch (FileNotFoundException ex) {
@@ -460,17 +446,9 @@ public class MyPanel extends JPanel implements ActionListener {
 
                 }
             });
-            this.add(export3, BorderLayout.SOUTH);
-
-        Reset = new JButton("Reset tabella");
-        export3.add(Reset, BorderLayout.NORTH);
-        Reset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resettatore();
-            }
-        });
-        this.add(export3, BorderLayout.EAST);
+            export.add(ButTxt, BorderLayout.WEST);
+            export.add(Importa, BorderLayout.SOUTH);
+            this.add(export, BorderLayout.SOUTH);                               //Il tutto a SOUTH
 
     }
 
@@ -558,9 +536,6 @@ public class MyPanel extends JPanel implements ActionListener {
      * @return
      */
 
-    /**
-     *Ho bisogno di riconvertire quando lo ricerco nell'elenco!!!
-     */
     public ArrayList<Conto> perio(String Primo, String Secondo, int gg){
         //tm.settaValori();
         //t.repaint();
@@ -605,12 +580,18 @@ public class MyPanel extends JPanel implements ActionListener {
     /**
      * Funzione che preleva testo dal primo campo e va a ricercare corrispondenze
      * È iniziata una nuova ricerca, si azzerano le ricerche precedenti
+     * @param v Indice del prossimo elemento da cui cercare
      */
     public int ricerca(int v)
     {
         int i=0;
         Boolean check=false;
         String key = this.txt.getText();
+        if(key.equals(""))
+        {
+            showMessageDialog(null, "Inserire una chiave di ricerca valida", "Errore", ERROR_MESSAGE);
+            return -1;
+        }
         NuovaL=lista;
         flush();            //pulisce le classi segnate come già cercate
         //int k2= Integer.parseInt(key);
@@ -651,8 +632,14 @@ public class MyPanel extends JPanel implements ActionListener {
      * Metodo per la ricerca di un match successivo nella lista
      */
 
-    private void RicercaSuccessivo(){
+    private void RicercaSuccessivo(int el){
         String key = this.txt.getText();
+        if(key.equals("") || el==-1)
+        {
+            showMessageDialog(null, "Effettuare prima la ricerca per match poi ricercare il prossimo",
+                    "Errore", ERROR_MESSAGE);
+            return;
+        }
         for (int i = 0; i < NuovaL.size(); i++) {
             if (((NuovaL.get(i).getDescrizione().toLowerCase()).contains(key.toLowerCase()) || NuovaL.get(i).getData().contains(key))
                     && !NuovaL.get(i).getCercato())
@@ -665,15 +652,9 @@ public class MyPanel extends JPanel implements ActionListener {
         }
     }
 
-
     /**
-     *
-     * @param e the event to be processed, è un ascoltatore che non fa nulla
+     * Metodo che Ricopia la lista in una copia, e nella lista originale inserisce i valori ricercati
      */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    }
-
     private void modificatore()
     {
 
@@ -730,6 +711,11 @@ public class MyPanel extends JPanel implements ActionListener {
 
     }
 
+    /**
+     * Metodo che viene utilizzato per riportare la lista al cuo contenuto originale 
+     * prima della modifica
+     */
+
     private void resettatore()
     {
         if (flag==0 || copia.isEmpty())
@@ -767,6 +753,14 @@ public class MyPanel extends JPanel implements ActionListener {
         t.repaint();
     }
 
+    /**
+     * 
+     * @param d1 Data di inizio periodo di ricerca
+     * @param d2 Data di fine periodo di ricerca
+     * @param n Periodo di giorni tra cui scegliere
+     * @return r, un flag che controlla se le date passate sono comprese nel range
+     */
+
     private boolean ControlloDate(LocalDate d1, LocalDate d2, int n)
     {
         boolean r=false;
@@ -785,12 +779,6 @@ public class MyPanel extends JPanel implements ActionListener {
                 if (Period.between(d1, d2).getDays() >= 0 &&
                         Period.between(d1, d2).getMonths() == 0 &&
                         Period.between(d1, d2).getYears() == 0) {
-                    /*System.out.println("Quello passato ha:");
-                    System.out.println(d1);
-                    System.out.println(d2);
-                    System.out.println(Period.between(d1,d2).getDays());
-                    System.out.println(Period.between(d1,d2).getMonths());
-                    System.out.println(Period.between(d1,d2).getYears());*/
                     r = true;
                 }
             }
@@ -803,5 +791,32 @@ public class MyPanel extends JPanel implements ActionListener {
             }
         }
         return r;
+    }
+
+    /**
+     * @param inDate La stringa che passiamo per poter controllare se 
+     * èuna stringa valida per poter essere salvata come data nuova di una 
+     * operazione
+     * @return Un booleano, in caso true la data è valida, no altrimenti
+     *
+     */
+
+    public static boolean isValidDate(String inDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(inDate.trim());
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param e the event to be processed, è un ascoltatore che non fa nulla
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
     }
 }

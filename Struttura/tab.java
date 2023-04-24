@@ -1,7 +1,5 @@
 package Struttura;
 
-
-
 import Classe_Conto.Conto;
 import Scrittura_File.ScritturaFile;
 
@@ -12,6 +10,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;  //Per capire se le date sono valide
+import java.text.ParseException;    //Per errori di conversione
+
+import static javax.swing.JOptionPane.*;
+
 
 public class tab extends DefaultTableModel {
 
@@ -138,13 +141,28 @@ public class tab extends DefaultTableModel {
      * @param row             Riga in cui è inserito
      * @param col          Colonna in cui è inserito
      */
-    public void setValueAt(Object value, int row, int col) {                //NON FUNZIONANTE
-        //Book b = (Book)v.elementAt(row);
-        //Classe_Conto.Conto[] c = new Classe_Conto.Conto[1];
+    public void setValueAt(Object value, int row, int col) {
         Conto contello = arrayConto.get(row);
+
+        //non so come mettere if else
+        boolean toggle =true;
+
+        contello.Data= value.toString();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse((contello.Data).trim());
+        } catch (ParseException e) {  
+            showMessageDialog(null, "Data non valida", "Errore", ERROR_MESSAGE);
+            toggle=false;
+            return;
+        }
+
+      if(!toggle)
+      {
         if (col == 0) {
-            contello.Data= value.toString();
-            //arrayConto.get(row).setData(value.toString());
+        contello.Data= value.toString();
+
             arrayConto.set(row, contello);
         }
         if(col==1){
@@ -162,6 +180,7 @@ public class tab extends DefaultTableModel {
         s.ScriviNormale("Struttura/dati.txt", arrayConto, "\n", false);
 
         fireTableDataChanged();
+      }
     }
 
     /**

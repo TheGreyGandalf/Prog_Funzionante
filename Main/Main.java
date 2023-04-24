@@ -35,7 +35,7 @@ public class Main {
             arr.add(ogg);
         }
 
-        MyPanel panel = new MyPanel(arr);
+        MyPanel panel = new MyPanel(arr, fil);
         f.add(panel);
         f.pack();
         f.setDefaultCloseOperation(EXIT_ON_CLOSE);
