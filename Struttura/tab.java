@@ -177,7 +177,7 @@ public class tab extends DefaultTableModel {
         }
 
         ScritturaFile s = new ScritturaFile();
-        s.ScriviNormale("Struttura/dati.txt", arrayConto, "\n", false);
+        s.ScriviNormale("Struttura/dati.txt", arrayConto, false);
 
         fireTableDataChanged();
       }

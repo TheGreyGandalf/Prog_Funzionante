@@ -2,6 +2,7 @@ package Struttura;
 
 import Classe_Conto.Conto;                  //classi dei package
 import Scrittura_File.ScritturaFile;
+import Scrittura_File.ScriviCsv;
 import Struttura.CalcolaEntrate;
 
 import javax.swing.*;
@@ -50,9 +51,11 @@ public class MyPanel extends JPanel implements ActionListener {
         private final JTable t;
         private final tab tm;
 
+        private ScritturaFile Onfile;
+
         private int flag=0;
         private int el=-1;               //Elemento che contiene il primo match
-        private File Nome_File;
+        private File Nome_File;            //Attributo che contiene il nome del file da cui andiamo a salvare/leggere
 
     /**
      *
@@ -61,6 +64,7 @@ public class MyPanel extends JPanel implements ActionListener {
      */
 
     public MyPanel(ArrayList<Conto> listaConto, File file) {
+            Onfile = new ScritturaFile();
             Nome_File=file;
             lista=listaConto;
 
@@ -276,7 +280,7 @@ public class MyPanel extends JPanel implements ActionListener {
                                     tm.Cambia();
                                     //String Utente = EtiExcel.getText();   Da usare!
                                     ScritturaFile sc = new ScritturaFile();
-                                    sc.ScriviNormale(Nome_File.toString(), lista, "\n", false);      //scrivo su file le modifiche
+                                    sc.ScriviNormale(Nome_File.toString(), lista, false);      //scrivo su file le modifiche
                                     //le scrivo su file
                                     tm.settaValori();
                                     t.repaint();
@@ -320,7 +324,7 @@ public class MyPanel extends JPanel implements ActionListener {
                     int i = t.getSelectedRow();
                     lista.remove(i);                        //elimino elemento selezionato
                     //String Utente = EtiExcel.getText();    //da usare
-                    scr.ScriviNormale(Nome_File.toString(), lista, "\n", false);
+                    scr.ScriviNormale(Nome_File.toString(), lista, false);
 
 
                     CalcolaEntrate ca = new CalcolaEntrate(lista);
@@ -364,7 +368,7 @@ public class MyPanel extends JPanel implements ActionListener {
                     String Utente = EtiExcel.getText();
                     File fif = new File(Utente+".ods");
                     ScritturaFile.fillData OnOpe = new ScritturaFile.fillData(t, fif);
-                    OnOpe.OpenDoc(fif, lista);          //scrttura su open document
+                    OnOpe.OpenDoc(fif, lista);          //scrittura su open document
                 }
             });
             
@@ -374,8 +378,19 @@ public class MyPanel extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
-                    ScritturaFile OnCsv = new ScritturaFile();
-                    OnCsv.ScriviNormale(Utente+".csv", lista,",", false);
+                    File Ut = new File(Utente+".csv");
+                    Onfile = new ScriviCsv();                //Polimorfismo utilizzato con successo
+                    if(Ut.exists() || Ut.isDirectory()) {
+                        if((JOptionPane.showConfirmDialog(null,"File già esistente, sovrascrivere?", "Attenzione", JOptionPane.YES_NO_OPTION)== JOptionPane.YES_OPTION))
+                        {
+                            //Scrittura anche in caso il file sia già esistente
+                            Onfile.ScriviNormale(Utente, lista, false);
+                        }
+                    }
+                    else
+                    {
+                        Onfile.ScriviNormale(Utente, lista, false);
+                    }
                 }
             });
 
@@ -386,8 +401,20 @@ public class MyPanel extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
-                    ScritturaFile OnCsv = new ScritturaFile();
-                    OnCsv.ScriviNormale(Utente+".txt", lista,"\n", false);
+                    File Ut = new File(Utente+".txt");
+                    //System.out.println(file.getName());
+                    Onfile = new ScritturaFile();           //Reset del tipo per polimorfismo
+                    if(Ut.exists() || Ut.isDirectory()) {
+                        if((JOptionPane.showConfirmDialog(null,"File già esistente, sovrascrivere?", "Attenzione", JOptionPane.YES_NO_OPTION)== JOptionPane.YES_OPTION))
+                        {
+                            //Scrittura anche in caso il file sia già esistente
+                            Onfile.ScriviNormale(Utente, lista, false);
+                        }
+                    }
+                    else
+                    {
+                        Onfile.ScriviNormale(Utente, lista, false);
+                    }
                 }
             });
 

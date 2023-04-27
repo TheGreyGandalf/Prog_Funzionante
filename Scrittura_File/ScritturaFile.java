@@ -27,10 +27,11 @@ public class ScritturaFile {
      *
      * @param Nomef Nome del file in cui andremo a esportare
      * @param lista Lista con aggiunta di voci a cui andremo a scrivere
+     * @param tipo Se il file viene aperto e utilizzato in append
      */
-    public void ScriviNormale(String Nomef, ArrayList<Conto> lista, String separatore, boolean tipo) {
+    public void ScriviNormale(String Nomef, ArrayList<Conto> lista, boolean tipo) {
         try {
-            File file = new File(Nomef);            //Apro il file passato
+            File file = new File(Nomef+".txt");            //Apro il file passato
             FileWriter fw = new FileWriter(file, tipo);         //passo file e se scrivo in append
             pw = new PrintWriter(fw);               //Strumento con cui vado a scrivere su file
 
@@ -41,7 +42,7 @@ public class ScritturaFile {
                 Dat=lista.get(i).getData();
                 Desc=lista.get(i).getDescrizione();
                 ammo=lista.get(i).getAmmontare();
-                pw.println(Dat+separatore+Desc+separatore+ammo);
+                pw.println(Dat+"\n"+Desc+"\n"+ammo);
             }
         } catch (IOException e)
         {
@@ -81,6 +82,10 @@ public class ScritturaFile {
 
     }
 
+    /**
+     * @param f Varviabile file del file in cui andiamo a scrivere
+     * @param Valori Arraylist con valori che andiamo a scrivere
+     */
 
     public void OpenDoc(File f, ArrayList<Conto> Valori)
     {
@@ -109,7 +114,7 @@ public class ScritturaFile {
     }
 
     /**
-     * Metodo per l'esportazione da JFrame a .xls
+     * Metodo per l'esportazione da JFrame a .ods
      */
     public static class fillData extends Scrittura_File.ScritturaFile {
         JTable t;
@@ -123,33 +128,3 @@ public class ScritturaFile {
 
 }
 
-
-        /*                  ClASSE PER SCRITTURA SU EXCEL
-        public void scriv(){
-            try {
-
-                WritableWorkbook workbook1 = Workbook.createWorkbook(f);
-                WritableSheet sheet1 = workbook1.createSheet("First Sheet", 0);
-                TableModel model = t.getModel();
-
-                for (int i = 0; i < model.getColumnCount(); i++) {
-                    Label column = new Label(i, 0, model.getColumnName(i));
-                    sheet1.addCell(column);
-                }
-                int j = 0;
-                for (int i = 0; i < model.getRowCount(); i++) {
-                    for (j = 0; j < model.getColumnCount(); j++) {
-                        Label row = new Label(j, i + 1, model.getValueAt(i, j).toString());
-                        sheet1.addCell(row);
-                    }
-                }
-                workbook1.write();
-                workbook1.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-}
-         */

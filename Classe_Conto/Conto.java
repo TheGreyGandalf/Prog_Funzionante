@@ -1,6 +1,10 @@
 package Classe_Conto;
 
 public class Conto {
+
+    /**
+     * Da rendere privati
+     */
     public String Data;                 //sarebbe meglio usare una classe a parte
     public String Descrizione;
     public int Ammontare;
