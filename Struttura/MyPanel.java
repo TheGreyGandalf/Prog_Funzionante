@@ -166,10 +166,10 @@ public class MyPanel extends JPanel implements ActionListener {
             JPanel pTab2 = new JPanel();                //secondo pannello con altri bottoni
             pTab2.setLayout(new BorderLayout());
 
-            txt = new JTextField("", 25);
+            txt = new JTextField("Inserire Match ricerca", 25);
             pTab2.add(txt, BorderLayout.CENTER);
 
-            txt2 = new JTextField("", 25);                  //Campo risultato ricerca
+            txt2 = new JTextField("Risultato Match ricerca", 25);                  //Campo risultato ricerca
             txt2.setEditable(false);
             pTab2.add(txt2, BorderLayout.EAST);
             
